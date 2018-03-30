@@ -121,7 +121,7 @@ func dataSourceAwsLbTargetGroup() *schema.Resource {
 				},
 			},
 
-			"tags": tagsSchemaComputed(),
+			"tags": TagsSchemaComputed(),
 		},
 	}
 }

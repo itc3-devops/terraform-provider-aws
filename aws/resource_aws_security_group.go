@@ -210,7 +210,7 @@ func resourceAwsSecurityGroup() *schema.Resource {
 				Computed: true,
 			},
 
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 
 			"revoke_rules_on_delete": {
 				Type:     schema.TypeBool,
@@ -264,7 +264,7 @@ func resourceAwsSecurityGroupCreate(d *schema.ResourceData, meta interface{}) er
 			d.Id(), err)
 	}
 
-	if err := setTags(conn, d); err != nil {
+	if err := SetTags(conn, d); err != nil {
 		return err
 	}
 
@@ -385,7 +385,7 @@ func resourceAwsSecurityGroupRead(d *schema.ResourceData, meta interface{}) erro
 		log.Printf("[WARN] Error setting Egress rule set for (%s): %s", d.Id(), err)
 	}
 
-	d.Set("tags", tagsToMap(sg.Tags))
+	d.Set("tags", TagsToMap(sg.Tags))
 	return nil
 }
 
@@ -424,7 +424,7 @@ func resourceAwsSecurityGroupUpdate(d *schema.ResourceData, meta interface{}) er
 	}
 
 	if !d.IsNewResource() {
-		if err := setTags(conn, d); err != nil {
+		if err := SetTags(conn, d); err != nil {
 			return err
 		}
 		d.SetPartial("tags")

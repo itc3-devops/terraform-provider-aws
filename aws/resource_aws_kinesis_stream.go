@@ -83,7 +83,7 @@ func resourceAwsKinesisStream() *schema.Resource {
 				Optional: true,
 				Computed: true,
 			},
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
@@ -136,7 +136,7 @@ func resourceAwsKinesisStreamUpdate(d *schema.ResourceData, meta interface{}) er
 	conn := meta.(*AWSClient).kinesisconn
 
 	d.Partial(true)
-	if err := setTagsKinesis(conn, d); err != nil {
+	if err := SetTagsKinesis(conn, d); err != nil {
 		return err
 	}
 
@@ -196,7 +196,7 @@ func resourceAwsKinesisStreamRead(d *schema.ResourceData, meta interface{}) erro
 	if err != nil {
 		log.Printf("[DEBUG] Error retrieving tags for Stream: %s. %s", sn, err)
 	} else {
-		d.Set("tags", tagsToMapKinesis(tagsResp.Tags))
+		d.Set("tags", TagsToMapKinesis(tagsResp.Tags))
 	}
 
 	return nil

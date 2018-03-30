@@ -100,7 +100,7 @@ func dataSourceAwsS3BucketObject() *schema.Resource {
 				Computed: true,
 			},
 
-			"tags": tagsSchemaComputed(),
+			"tags": TagsSchemaComputed(),
 		},
 	}
 }
@@ -211,7 +211,7 @@ func dataSourceAwsS3BucketObjectRead(d *schema.ResourceData, meta interface{}) e
 	if err != nil {
 		return err
 	}
-	d.Set("tags", tagsToMapS3(tagResp.TagSet))
+	d.Set("tags", TagsToMapS3(tagResp.TagSet))
 
 	return nil
 }

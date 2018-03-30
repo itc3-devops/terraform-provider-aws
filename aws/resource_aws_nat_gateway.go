@@ -54,7 +54,7 @@ func resourceAwsNatGateway() *schema.Resource {
 				Computed: true,
 			},
 
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
@@ -129,7 +129,7 @@ func resourceAwsNatGatewayRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("public_ip", address.PublicIp)
 
 	// Tags
-	d.Set("tags", tagsToMap(ng.Tags))
+	d.Set("tags", TagsToMap(ng.Tags))
 
 	return nil
 }
@@ -140,7 +140,7 @@ func resourceAwsNatGatewayUpdate(d *schema.ResourceData, meta interface{}) error
 	// Turn on partial mode
 	d.Partial(true)
 
-	if err := setTags(conn, d); err != nil {
+	if err := SetTags(conn, d); err != nil {
 		return err
 	}
 	d.SetPartial("tags")

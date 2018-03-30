@@ -8,10 +8,10 @@ import (
 	"github.com/aws/aws-sdk-go/service/codebuild"
 )
 
-// diffTags takes our tags locally and the ones remotely and returns
+// DiffTags takes our tags locally and the ones remotely and returns
 // the set of tags that must be created, and the set of tags that must
 // be destroyed.
-func diffTagsCodeBuild(oldTags, newTags []*codebuild.Tag) ([]*codebuild.Tag, []*codebuild.Tag) {
+func DiffTagsCodeBuild(oldTags, newTags []*codebuild.Tag) ([]*codebuild.Tag, []*codebuild.Tag) {
 	// First, we're creating everything we have
 	create := make(map[string]interface{})
 	for _, t := range newTags {
@@ -28,10 +28,10 @@ func diffTagsCodeBuild(oldTags, newTags []*codebuild.Tag) ([]*codebuild.Tag, []*
 		}
 	}
 
-	return tagsFromMapCodeBuild(create), remove
+	return TagsFromMapCodeBuild(create), remove
 }
 
-func tagsFromMapCodeBuild(m map[string]interface{}) []*codebuild.Tag {
+func TagsFromMapCodeBuild(m map[string]interface{}) []*codebuild.Tag {
 	result := []*codebuild.Tag{}
 	for k, v := range m {
 		result = append(result, &codebuild.Tag{
@@ -43,7 +43,7 @@ func tagsFromMapCodeBuild(m map[string]interface{}) []*codebuild.Tag {
 	return result
 }
 
-func tagsToMapCodeBuild(ts []*codebuild.Tag) map[string]string {
+func TagsToMapCodeBuild(ts []*codebuild.Tag) map[string]string {
 	result := map[string]string{}
 	for _, t := range ts {
 		result[*t.Key] = *t.Value
@@ -54,7 +54,7 @@ func tagsToMapCodeBuild(ts []*codebuild.Tag) map[string]string {
 
 // compare a tag against a list of strings and checks if it should
 // be ignored or not
-func tagIgnoredCodeBuild(t *codebuild.Tag) bool {
+func TagIgnoredCodeBuild(t *codebuild.Tag) bool {
 	filter := []string{"^aws:"}
 	for _, v := range filter {
 		log.Printf("[DEBUG] Matching %v with %v\n", v, *t.Key)

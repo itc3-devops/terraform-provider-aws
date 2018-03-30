@@ -325,7 +325,7 @@ func resourceAwsEMRCluster() *schema.Resource {
 					},
 				},
 			},
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 			"configurations": {
 				Type:     schema.TypeString,
 				ForceNew: true,
@@ -621,7 +621,7 @@ func resourceAwsEMRClusterRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("log_uri", cluster.LogUri)
 	d.Set("master_public_dns", cluster.MasterPublicDnsName)
 	d.Set("visible_to_all_users", cluster.VisibleToAllUsers)
-	d.Set("tags", tagsToMapEMR(cluster.Tags))
+	d.Set("tags", TagsToMapEMR(cluster.Tags))
 	d.Set("ebs_root_volume_size", cluster.EbsRootVolumeSize)
 	d.Set("scale_down_behavior", cluster.ScaleDownBehavior)
 
@@ -762,7 +762,7 @@ func resourceAwsEMRClusterUpdate(d *schema.ResourceData, meta interface{}) error
 		}
 	}
 
-	if err := setTagsEMR(conn, d); err != nil {
+	if err := SetTagsEMR(conn, d); err != nil {
 		return err
 	} else {
 		d.SetPartial("tags")
@@ -1059,7 +1059,7 @@ func expandTags(m map[string]interface{}) []*emr.Tag {
 	return result
 }
 
-func tagsToMapEMR(ts []*emr.Tag) map[string]string {
+func TagsToMapEMR(ts []*emr.Tag) map[string]string {
 	result := make(map[string]string)
 	for _, t := range ts {
 		result[*t.Key] = *t.Value
@@ -1068,7 +1068,7 @@ func tagsToMapEMR(ts []*emr.Tag) map[string]string {
 	return result
 }
 
-func diffTagsEMR(oldTags, newTags []*emr.Tag) ([]*emr.Tag, []*emr.Tag) {
+func DiffTagsEMR(oldTags, newTags []*emr.Tag) ([]*emr.Tag, []*emr.Tag) {
 	// First, we're creating everything we have
 	create := make(map[string]interface{})
 	for _, t := range newTags {
@@ -1088,12 +1088,12 @@ func diffTagsEMR(oldTags, newTags []*emr.Tag) ([]*emr.Tag, []*emr.Tag) {
 	return expandTags(create), remove
 }
 
-func setTagsEMR(conn *emr.EMR, d *schema.ResourceData) error {
+func SetTagsEMR(conn *emr.EMR, d *schema.ResourceData) error {
 	if d.HasChange("tags") {
 		oraw, nraw := d.GetChange("tags")
 		o := oraw.(map[string]interface{})
 		n := nraw.(map[string]interface{})
-		create, remove := diffTagsEMR(expandTags(o), expandTags(n))
+		create, remove := DiffTagsEMR(expandTags(o), expandTags(n))
 
 		// Set tags
 		if len(remove) > 0 {

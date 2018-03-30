@@ -145,7 +145,7 @@ func dataSourceAwsDynamoDbTable() *schema.Resource {
 					return strings.ToUpper(value)
 				},
 			},
-			"tags": tagsSchemaComputed(),
+			"tags": TagsSchemaComputed(),
 			"ttl": {
 				Type:     schema.TypeSet,
 				Computed: true,

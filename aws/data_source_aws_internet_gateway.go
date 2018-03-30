@@ -19,7 +19,7 @@ func dataSourceAwsInternetGateway() *schema.Resource {
 				Computed: true,
 			},
 			"filter": ec2CustomFiltersSchema(),
-			"tags":   tagsSchemaComputed(),
+			"tags":   TagsSchemaComputed(),
 			"attachments": {
 				Type:     schema.TypeList,
 				Computed: true,
@@ -55,7 +55,7 @@ func dataSourceAwsInternetGatewayRead(d *schema.ResourceData, meta interface{}) 
 		"internet-gateway-id": internetGatewayId.(string),
 	})
 	req.Filters = append(req.Filters, buildEC2TagFilterList(
-		tagsFromMap(tags.(map[string]interface{})),
+		TagsFromMap(tags.(map[string]interface{})),
 	)...)
 	req.Filters = append(req.Filters, buildEC2CustomFilterList(
 		filter.(*schema.Set),
@@ -76,7 +76,7 @@ func dataSourceAwsInternetGatewayRead(d *schema.ResourceData, meta interface{}) 
 
 	igw := resp.InternetGateways[0]
 	d.SetId(aws.StringValue(igw.InternetGatewayId))
-	d.Set("tags", tagsToMap(igw.Tags))
+	d.Set("tags", TagsToMap(igw.Tags))
 	d.Set("internet_gateway_id", igw.InternetGatewayId)
 	if err := d.Set("attachments", dataSourceAttachmentsRead(igw.Attachments)); err != nil {
 		return err

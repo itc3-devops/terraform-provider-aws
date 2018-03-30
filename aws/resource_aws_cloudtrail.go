@@ -126,7 +126,7 @@ func resourceAwsCloudTrail() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
@@ -270,7 +270,7 @@ func resourceAwsCloudTrailRead(d *schema.ResourceData, meta interface{}) error {
 		tags = tagsOut.ResourceTagList[0].TagsList
 	}
 
-	if err := d.Set("tags", tagsToMapCloudtrail(tags)); err != nil {
+	if err := d.Set("tags", TagsToMapCloudtrail(tags)); err != nil {
 		return err
 	}
 
@@ -351,7 +351,7 @@ func resourceAwsCloudTrailUpdate(d *schema.ResourceData, meta interface{}) error
 	}
 
 	if d.HasChange("tags") {
-		err := setTagsCloudtrail(conn, d)
+		err := SetTagsCloudtrail(conn, d)
 		if err != nil {
 			return err
 		}

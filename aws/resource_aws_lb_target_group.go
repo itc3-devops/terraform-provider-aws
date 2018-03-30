@@ -186,7 +186,7 @@ func resourceAwsLbTargetGroup() *schema.Resource {
 				},
 			},
 
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
@@ -279,7 +279,7 @@ func resourceAwsLbTargetGroupRead(d *schema.ResourceData, meta interface{}) erro
 func resourceAwsLbTargetGroupUpdate(d *schema.ResourceData, meta interface{}) error {
 	elbconn := meta.(*AWSClient).elbv2conn
 
-	if err := setElbV2Tags(elbconn, d); err != nil {
+	if err := SetElbV2Tags(elbconn, d); err != nil {
 		return errwrap.Wrapf("Error Modifying Tags on LB Target Group: {{err}}", err)
 	}
 
@@ -507,7 +507,7 @@ func flattenAwsLbTargetGroupResource(d *schema.ResourceData, meta interface{}, t
 	}
 	for _, t := range tagsResp.TagDescriptions {
 		if *t.ResourceArn == d.Id() {
-			if err := d.Set("tags", tagsToMapELBv2(t.Tags)); err != nil {
+			if err := d.Set("tags", TagsToMapELBv2(t.Tags)); err != nil {
 				return err
 			}
 		}

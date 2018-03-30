@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-// setTags is a helper to set the tags for a resource. It expects the
+// SetTags is a helper to set the tags for a resource. It expects the
 // tags field to be named "tags"
-func setTagsR53(conn *route53.Route53, d *schema.ResourceData, resourceType string) error {
+func SetTagsR53(conn *route53.Route53, d *schema.ResourceData, resourceType string) error {
 	if d.HasChange("tags") {
 		oraw, nraw := d.GetChange("tags")
 		o := oraw.(map[string]interface{})
 		n := nraw.(map[string]interface{})
-		create, remove := diffTagsR53(tagsFromMapR53(o), tagsFromMapR53(n))
+		create, remove := DiffTagsR53(TagsFromMapR53(o), TagsFromMapR53(n))
 
 		// Set tags
 		r := make([]*string, len(remove))
@@ -45,10 +45,10 @@ func setTagsR53(conn *route53.Route53, d *schema.ResourceData, resourceType stri
 	return nil
 }
 
-// diffTags takes our tags locally and the ones remotely and returns
+// DiffTags takes our tags locally and the ones remotely and returns
 // the set of tags that must be created, and the set of tags that must
 // be destroyed.
-func diffTagsR53(oldTags, newTags []*route53.Tag) ([]*route53.Tag, []*route53.Tag) {
+func DiffTagsR53(oldTags, newTags []*route53.Tag) ([]*route53.Tag, []*route53.Tag) {
 	// First, we're creating everything we have
 	create := make(map[string]interface{})
 	for _, t := range newTags {
@@ -65,18 +65,18 @@ func diffTagsR53(oldTags, newTags []*route53.Tag) ([]*route53.Tag, []*route53.Ta
 		}
 	}
 
-	return tagsFromMapR53(create), remove
+	return TagsFromMapR53(create), remove
 }
 
-// tagsFromMap returns the tags for the given map of data.
-func tagsFromMapR53(m map[string]interface{}) []*route53.Tag {
+// TagsFromMap returns the tags for the given map of data.
+func TagsFromMapR53(m map[string]interface{}) []*route53.Tag {
 	result := make([]*route53.Tag, 0, len(m))
 	for k, v := range m {
 		t := &route53.Tag{
 			Key:   aws.String(k),
 			Value: aws.String(v.(string)),
 		}
-		if !tagIgnoredRoute53(t) {
+		if !TagIgnoredRoute53(t) {
 			result = append(result, t)
 		}
 	}
@@ -84,11 +84,11 @@ func tagsFromMapR53(m map[string]interface{}) []*route53.Tag {
 	return result
 }
 
-// tagsToMap turns the list of tags into a map.
-func tagsToMapR53(ts []*route53.Tag) map[string]string {
+// TagsToMap turns the list of tags into a map.
+func TagsToMapR53(ts []*route53.Tag) map[string]string {
 	result := make(map[string]string)
 	for _, t := range ts {
-		if !tagIgnoredRoute53(t) {
+		if !TagIgnoredRoute53(t) {
 			result[*t.Key] = *t.Value
 		}
 	}
@@ -98,7 +98,7 @@ func tagsToMapR53(ts []*route53.Tag) map[string]string {
 
 // compare a tag against a list of strings and checks if it should
 // be ignored or not
-func tagIgnoredRoute53(t *route53.Tag) bool {
+func TagIgnoredRoute53(t *route53.Tag) bool {
 	filter := []string{"^aws:"}
 	for _, v := range filter {
 		log.Printf("[DEBUG] Matching %v with %v\n", v, *t.Key)

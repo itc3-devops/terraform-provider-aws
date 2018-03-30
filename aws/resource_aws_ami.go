@@ -229,7 +229,7 @@ func resourceAwsAmiRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("ebs_block_device", ebsBlockDevs)
 	d.Set("ephemeral_block_device", ephemeralBlockDevs)
 
-	d.Set("tags", tagsToMap(image.Tags))
+	d.Set("tags", TagsToMap(image.Tags))
 
 	return nil
 }
@@ -239,7 +239,7 @@ func resourceAwsAmiUpdate(d *schema.ResourceData, meta interface{}) error {
 
 	d.Partial(true)
 
-	if err := setTags(client, d); err != nil {
+	if err := SetTags(client, d); err != nil {
 		return err
 	} else {
 		d.SetPartial("tags")
@@ -560,7 +560,7 @@ func resourceAwsAmiCommonSchema(computed bool) map[string]*schema.Schema {
 			},
 		},
 
-		"tags": tagsSchema(),
+		"tags": TagsSchema(),
 
 		// Not a public attribute; used to let the aws_ami_copy and aws_ami_from_instance
 		// resources record that they implicitly created new EBS snapshots that we should

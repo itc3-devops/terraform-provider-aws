@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-// setTags is a helper to set the tags for a resource. It expects the
+// SetTags is a helper to set the tags for a resource. It expects the
 // tags field to be named "tags"
-func setTagsDS(conn *directoryservice.DirectoryService, d *schema.ResourceData, resourceId string) error {
+func SetTagsDS(conn *directoryservice.DirectoryService, d *schema.ResourceData, resourceId string) error {
 	if d.HasChange("tags") {
 		oraw, nraw := d.GetChange("tags")
 		o := oraw.(map[string]interface{})
 		n := nraw.(map[string]interface{})
-		create, remove := diffTagsDS(tagsFromMapDS(o), tagsFromMapDS(n))
+		create, remove := DiffTagsDS(TagsFromMapDS(o), TagsFromMapDS(n))
 
 		// Set tags
 		if len(remove) > 0 {
@@ -49,10 +49,10 @@ func setTagsDS(conn *directoryservice.DirectoryService, d *schema.ResourceData, 
 	return nil
 }
 
-// diffTags takes our tags locally and the ones remotely and returns
+// DiffTags takes our tags locally and the ones remotely and returns
 // the set of tags that must be created, and the set of tags that must
 // be destroyed.
-func diffTagsDS(oldTags, newTags []*directoryservice.Tag) ([]*directoryservice.Tag, []*directoryservice.Tag) {
+func DiffTagsDS(oldTags, newTags []*directoryservice.Tag) ([]*directoryservice.Tag, []*directoryservice.Tag) {
 	// First, we're creating everything we have
 	create := make(map[string]interface{})
 	for _, t := range newTags {
@@ -69,18 +69,18 @@ func diffTagsDS(oldTags, newTags []*directoryservice.Tag) ([]*directoryservice.T
 		}
 	}
 
-	return tagsFromMapDS(create), remove
+	return TagsFromMapDS(create), remove
 }
 
-// tagsFromMap returns the tags for the given map of data.
-func tagsFromMapDS(m map[string]interface{}) []*directoryservice.Tag {
+// TagsFromMap returns the tags for the given map of data.
+func TagsFromMapDS(m map[string]interface{}) []*directoryservice.Tag {
 	result := make([]*directoryservice.Tag, 0, len(m))
 	for k, v := range m {
 		t := &directoryservice.Tag{
 			Key:   aws.String(k),
 			Value: aws.String(v.(string)),
 		}
-		if !tagIgnoredDS(t) {
+		if !TagIgnoredDS(t) {
 			result = append(result, t)
 		}
 	}
@@ -88,11 +88,11 @@ func tagsFromMapDS(m map[string]interface{}) []*directoryservice.Tag {
 	return result
 }
 
-// tagsToMap turns the list of tags into a map.
-func tagsToMapDS(ts []*directoryservice.Tag) map[string]string {
+// TagsToMap turns the list of tags into a map.
+func TagsToMapDS(ts []*directoryservice.Tag) map[string]string {
 	result := make(map[string]string)
 	for _, t := range ts {
-		if !tagIgnoredDS(t) {
+		if !TagIgnoredDS(t) {
 			result[*t.Key] = *t.Value
 		}
 	}
@@ -102,7 +102,7 @@ func tagsToMapDS(ts []*directoryservice.Tag) map[string]string {
 
 // compare a tag against a list of strings and checks if it should
 // be ignored or not
-func tagIgnoredDS(t *directoryservice.Tag) bool {
+func TagIgnoredDS(t *directoryservice.Tag) bool {
 	filter := []string{"^aws:"}
 	for _, v := range filter {
 		log.Printf("[DEBUG] Matching %v with %v\n", v, *t.Key)

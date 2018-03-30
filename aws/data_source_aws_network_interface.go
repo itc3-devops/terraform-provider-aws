@@ -126,7 +126,7 @@ func dataSourceAwsNetworkInterface() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"tags": tagsSchemaComputed(),
+			"tags": TagsSchemaComputed(),
 		},
 	}
 }
@@ -180,6 +180,6 @@ func dataSourceAwsNetworkInterfaceRead(d *schema.ResourceData, meta interface{})
 	d.Set("requester_id", eni.RequesterId)
 	d.Set("subnet_id", eni.SubnetId)
 	d.Set("vpc_id", eni.VpcId)
-	d.Set("tags", tagsToMap(eni.TagSet))
+	d.Set("tags", TagsToMap(eni.TagSet))
 	return nil
 }

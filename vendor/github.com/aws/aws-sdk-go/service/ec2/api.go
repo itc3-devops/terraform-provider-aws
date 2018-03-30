@@ -29229,8 +29229,8 @@ func (s *CreateSnapshotInput) SetDryRun(v bool) *CreateSnapshotInput {
 	return s
 }
 
-// SetTagSpecifications sets the TagSpecifications field's value.
-func (s *CreateSnapshotInput) SetTagSpecifications(v []*TagSpecification) *CreateSnapshotInput {
+// SetTagspecifications sets the TagSpecifications field's value.
+func (s *CreateSnapshotInput) SetTagspecifications(v []*TagSpecification) *CreateSnapshotInput {
 	s.TagSpecifications = v
 	return s
 }
@@ -29665,8 +29665,8 @@ func (s *CreateVolumeInput) SetSnapshotId(v string) *CreateVolumeInput {
 	return s
 }
 
-// SetTagSpecifications sets the TagSpecifications field's value.
-func (s *CreateVolumeInput) SetTagSpecifications(v []*TagSpecification) *CreateVolumeInput {
+// SetTagspecifications sets the TagSpecifications field's value.
+func (s *CreateVolumeInput) SetTagspecifications(v []*TagSpecification) *CreateVolumeInput {
 	s.TagSpecifications = v
 	return s
 }
@@ -54786,8 +54786,8 @@ func (s *NetworkInterface) SetSubnetId(v string) *NetworkInterface {
 	return s
 }
 
-// SetTagSet sets the TagSet field's value.
-func (s *NetworkInterface) SetTagSet(v []*Tag) *NetworkInterface {
+// SetTagset sets the TagSet field's value.
+func (s *NetworkInterface) SetTagset(v []*Tag) *NetworkInterface {
 	s.TagSet = v
 	return s
 }
@@ -57965,8 +57965,8 @@ func (s *RequestLaunchTemplateData) SetSecurityGroups(v []*string) *RequestLaunc
 	return s
 }
 
-// SetTagSpecifications sets the TagSpecifications field's value.
-func (s *RequestLaunchTemplateData) SetTagSpecifications(v []*LaunchTemplateTagSpecificationRequest) *RequestLaunchTemplateData {
+// SetTagspecifications sets the TagSpecifications field's value.
+func (s *RequestLaunchTemplateData) SetTagspecifications(v []*LaunchTemplateTagSpecificationRequest) *RequestLaunchTemplateData {
 	s.TagSpecifications = v
 	return s
 }
@@ -59919,8 +59919,8 @@ func (s *ResponseLaunchTemplateData) SetSecurityGroups(v []*string) *ResponseLau
 	return s
 }
 
-// SetTagSpecifications sets the TagSpecifications field's value.
-func (s *ResponseLaunchTemplateData) SetTagSpecifications(v []*LaunchTemplateTagSpecification) *ResponseLaunchTemplateData {
+// SetTagspecifications sets the TagSpecifications field's value.
+func (s *ResponseLaunchTemplateData) SetTagspecifications(v []*LaunchTemplateTagSpecification) *ResponseLaunchTemplateData {
 	s.TagSpecifications = v
 	return s
 }
@@ -60949,8 +60949,8 @@ func (s *RunInstancesInput) SetSubnetId(v string) *RunInstancesInput {
 	return s
 }
 
-// SetTagSpecifications sets the TagSpecifications field's value.
-func (s *RunInstancesInput) SetTagSpecifications(v []*TagSpecification) *RunInstancesInput {
+// SetTagspecifications sets the TagSpecifications field's value.
+func (s *RunInstancesInput) SetTagspecifications(v []*TagSpecification) *RunInstancesInput {
 	s.TagSpecifications = v
 	return s
 }
@@ -63328,8 +63328,8 @@ func (s *SpotFleetLaunchSpecification) SetSubnetId(v string) *SpotFleetLaunchSpe
 	return s
 }
 
-// SetTagSpecifications sets the TagSpecifications field's value.
-func (s *SpotFleetLaunchSpecification) SetTagSpecifications(v []*SpotFleetTagSpecification) *SpotFleetLaunchSpecification {
+// SetTagspecifications sets the TagSpecifications field's value.
+func (s *SpotFleetLaunchSpecification) SetTagspecifications(v []*SpotFleetTagSpecification) *SpotFleetLaunchSpecification {
 	s.TagSpecifications = v
 	return s
 }

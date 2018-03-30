@@ -41,7 +41,7 @@ func resourceAwsRedshiftSubnetGroup() *schema.Resource {
 				Set:      schema.HashString,
 			},
 
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
@@ -54,7 +54,7 @@ func resourceAwsRedshiftSubnetGroupCreate(d *schema.ResourceData, meta interface
 	for i, subnetId := range subnetIdsSet.List() {
 		subnetIds[i] = aws.String(subnetId.(string))
 	}
-	tags := tagsFromMapRedshift(d.Get("tags").(map[string]interface{}))
+	tags := TagsFromMapRedshift(d.Get("tags").(map[string]interface{}))
 
 	createOpts := redshift.CreateClusterSubnetGroupInput{
 		ClusterSubnetGroupName: aws.String(d.Get("name").(string)),
@@ -98,7 +98,7 @@ func resourceAwsRedshiftSubnetGroupRead(d *schema.ResourceData, meta interface{}
 	d.Set("name", d.Id())
 	d.Set("description", describeResp.ClusterSubnetGroups[0].Description)
 	d.Set("subnet_ids", subnetIdsToSlice(describeResp.ClusterSubnetGroups[0].Subnets))
-	if err := d.Set("tags", tagsToMapRedshift(describeResp.ClusterSubnetGroups[0].Tags)); err != nil {
+	if err := d.Set("tags", TagsToMapRedshift(describeResp.ClusterSubnetGroups[0].Tags)); err != nil {
 		return fmt.Errorf("[DEBUG] Error setting Redshift Subnet Group Tags: %#v", err)
 	}
 
@@ -112,7 +112,7 @@ func resourceAwsRedshiftSubnetGroupUpdate(d *schema.ResourceData, meta interface
 	if tagErr != nil {
 		return fmt.Errorf("Error building ARN for Redshift Subnet Group, not updating Tags for Subnet Group %s", d.Id())
 	} else {
-		if tagErr := setTagsRedshift(conn, d, arn); tagErr != nil {
+		if tagErr := SetTagsRedshift(conn, d, arn); tagErr != nil {
 			return tagErr
 		}
 	}

@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-// setTags is a helper to set the tags for a resource. It expects the
+// SetTags is a helper to set the tags for a resource. It expects the
 // tags field to be named "tags"
-func setTagsElasticsearchService(conn *elasticsearch.ElasticsearchService, d *schema.ResourceData, arn string) error {
+func SetTagsElasticsearchService(conn *elasticsearch.ElasticsearchService, d *schema.ResourceData, arn string) error {
 	if d.HasChange("tags") {
 		oraw, nraw := d.GetChange("tags")
 		o := oraw.(map[string]interface{})
 		n := nraw.(map[string]interface{})
-		create, remove := diffTagsElasticsearchService(tagsFromMapElasticsearchService(o), tagsFromMapElasticsearchService(n))
+		create, remove := DiffTagsElasticsearchService(TagsFromMapElasticsearchService(o), TagsFromMapElasticsearchService(n))
 
 		// Set tags
 		if len(remove) > 0 {
@@ -48,10 +48,10 @@ func setTagsElasticsearchService(conn *elasticsearch.ElasticsearchService, d *sc
 	return nil
 }
 
-// diffTags takes our tags locally and the ones remotely and returns
+// DiffTags takes our tags locally and the ones remotely and returns
 // the set of tags that must be created, and the set of tags that must
 // be destroyed.
-func diffTagsElasticsearchService(oldTags, newTags []*elasticsearch.Tag) ([]*elasticsearch.Tag, []*elasticsearch.Tag) {
+func DiffTagsElasticsearchService(oldTags, newTags []*elasticsearch.Tag) ([]*elasticsearch.Tag, []*elasticsearch.Tag) {
 	// First, we're creating everything we have
 	create := make(map[string]interface{})
 	for _, t := range newTags {
@@ -68,18 +68,18 @@ func diffTagsElasticsearchService(oldTags, newTags []*elasticsearch.Tag) ([]*ela
 		}
 	}
 
-	return tagsFromMapElasticsearchService(create), remove
+	return TagsFromMapElasticsearchService(create), remove
 }
 
-// tagsFromMap returns the tags for the given map of data.
-func tagsFromMapElasticsearchService(m map[string]interface{}) []*elasticsearch.Tag {
+// TagsFromMap returns the tags for the given map of data.
+func TagsFromMapElasticsearchService(m map[string]interface{}) []*elasticsearch.Tag {
 	var result []*elasticsearch.Tag
 	for k, v := range m {
 		t := &elasticsearch.Tag{
 			Key:   aws.String(k),
 			Value: aws.String(v.(string)),
 		}
-		if !tagIgnoredElasticsearchService(t) {
+		if !TagIgnoredElasticsearchService(t) {
 			result = append(result, t)
 		}
 	}
@@ -87,11 +87,11 @@ func tagsFromMapElasticsearchService(m map[string]interface{}) []*elasticsearch.
 	return result
 }
 
-// tagsToMap turns the list of tags into a map.
-func tagsToMapElasticsearchService(ts []*elasticsearch.Tag) map[string]string {
+// TagsToMap turns the list of tags into a map.
+func TagsToMapElasticsearchService(ts []*elasticsearch.Tag) map[string]string {
 	result := make(map[string]string)
 	for _, t := range ts {
-		if !tagIgnoredElasticsearchService(t) {
+		if !TagIgnoredElasticsearchService(t) {
 			result[*t.Key] = *t.Value
 		}
 	}
@@ -101,7 +101,7 @@ func tagsToMapElasticsearchService(ts []*elasticsearch.Tag) map[string]string {
 
 // compare a tag against a list of strings and checks if it should
 // be ignored or not
-func tagIgnoredElasticsearchService(t *elasticsearch.Tag) bool {
+func TagIgnoredElasticsearchService(t *elasticsearch.Tag) bool {
 	filter := []string{"^aws:"}
 	for _, v := range filter {
 		log.Printf("[DEBUG] Matching %v with %v\n", v, *t.Key)

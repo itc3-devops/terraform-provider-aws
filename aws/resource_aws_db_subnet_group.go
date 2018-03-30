@@ -58,14 +58,14 @@ func resourceAwsDbSubnetGroup() *schema.Resource {
 				Set:      schema.HashString,
 			},
 
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
 
 func resourceAwsDbSubnetGroupCreate(d *schema.ResourceData, meta interface{}) error {
 	rdsconn := meta.(*AWSClient).rdsconn
-	tags := tagsFromMapRDS(d.Get("tags").(map[string]interface{}))
+	tags := TagsFromMapRDS(d.Get("tags").(map[string]interface{}))
 
 	subnetIdsSet := d.Get("subnet_ids").(*schema.Set)
 	subnetIds := make([]*string, subnetIdsSet.Len())
@@ -164,7 +164,7 @@ func resourceAwsDbSubnetGroupRead(d *schema.ResourceData, meta interface{}) erro
 		if len(resp.TagList) > 0 {
 			dt = resp.TagList
 		}
-		d.Set("tags", tagsToMapRDS(dt))
+		d.Set("tags", TagsToMapRDS(dt))
 	}
 
 	return nil
@@ -196,7 +196,7 @@ func resourceAwsDbSubnetGroupUpdate(d *schema.ResourceData, meta interface{}) er
 	}
 
 	if arn, err := buildRDSsubgrpARN(d.Id(), meta.(*AWSClient).partition, meta.(*AWSClient).accountid, meta.(*AWSClient).region); err == nil {
-		if err := setTagsRDS(conn, d, arn); err != nil {
+		if err := SetTagsRDS(conn, d, arn); err != nil {
 			return err
 		} else {
 			d.SetPartial("tags")

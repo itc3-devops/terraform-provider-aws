@@ -38,7 +38,7 @@ func resourceAwsS3BucketMetric() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"tags": tagsSchema(),
+						"tags": TagsSchema(),
 					},
 				},
 			},
@@ -164,7 +164,7 @@ func expandS3MetricsFilter(m map[string]interface{}) *s3.MetricsFilter {
 
 	var tags []*s3.Tag
 	if v, ok := m["tags"]; ok {
-		tags = tagsFromMapS3(v.(map[string]interface{}))
+		tags = TagsFromMapS3(v.(map[string]interface{}))
 	}
 
 	metricsFilter := &s3.MetricsFilter{}
@@ -194,7 +194,7 @@ func flattenS3MetricsFilter(metricsFilter *s3.MetricsFilter) map[string]interfac
 			m["prefix"] = *and.Prefix
 		}
 		if and.Tags != nil {
-			m["tags"] = tagsToMapS3(and.Tags)
+			m["tags"] = TagsToMapS3(and.Tags)
 		}
 	} else if metricsFilter.Prefix != nil {
 		m["prefix"] = *metricsFilter.Prefix
@@ -202,7 +202,7 @@ func flattenS3MetricsFilter(metricsFilter *s3.MetricsFilter) map[string]interfac
 		tags := []*s3.Tag{
 			metricsFilter.Tag,
 		}
-		m["tags"] = tagsToMapS3(tags)
+		m["tags"] = TagsToMapS3(tags)
 	}
 	return m
 }

@@ -76,14 +76,14 @@ func resourceAwsDbSecurityGroup() *schema.Resource {
 				Set: resourceAwsDbSecurityGroupIngressHash,
 			},
 
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
 
 func resourceAwsDbSecurityGroupCreate(d *schema.ResourceData, meta interface{}) error {
 	conn := meta.(*AWSClient).rdsconn
-	tags := tagsFromMapRDS(d.Get("tags").(map[string]interface{}))
+	tags := TagsFromMapRDS(d.Get("tags").(map[string]interface{}))
 
 	var err error
 	var errs []error
@@ -197,7 +197,7 @@ func resourceAwsDbSecurityGroupRead(d *schema.ResourceData, meta interface{}) er
 		if len(resp.TagList) > 0 {
 			dt = resp.TagList
 		}
-		d.Set("tags", tagsToMapRDS(dt))
+		d.Set("tags", TagsToMapRDS(dt))
 	}
 
 	return nil
@@ -208,7 +208,7 @@ func resourceAwsDbSecurityGroupUpdate(d *schema.ResourceData, meta interface{}) 
 
 	d.Partial(true)
 	if arn, err := buildRDSSecurityGroupARN(d.Id(), meta.(*AWSClient).partition, meta.(*AWSClient).accountid, meta.(*AWSClient).region); err == nil {
-		if err := setTagsRDS(conn, d, arn); err != nil {
+		if err := SetTagsRDS(conn, d, arn); err != nil {
 			return err
 		} else {
 			d.SetPartial("tags")

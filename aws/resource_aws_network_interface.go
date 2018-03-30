@@ -101,7 +101,7 @@ func resourceAwsNetworkInterface() *schema.Resource {
 				Set: resourceAwsEniAttachmentHash,
 			},
 
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
@@ -177,7 +177,7 @@ func resourceAwsNetworkInterfaceRead(d *schema.ResourceData, meta interface{}) e
 	}
 
 	// Tags
-	d.Set("tags", tagsToMap(eni.TagSet))
+	d.Set("tags", TagsToMap(eni.TagSet))
 
 	if eni.Attachment != nil {
 		attachment := []map[string]interface{}{flattenAttachment(eni.Attachment)}
@@ -395,7 +395,7 @@ func resourceAwsNetworkInterfaceUpdate(d *schema.ResourceData, meta interface{})
 		d.SetPartial("description")
 	}
 
-	if err := setTags(conn, d); err != nil {
+	if err := SetTags(conn, d); err != nil {
 		return err
 	} else {
 		d.SetPartial("tags")

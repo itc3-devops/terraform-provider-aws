@@ -47,9 +47,9 @@ func TestDiffGenericTags(t *testing.T) {
 	}
 
 	for i, tc := range cases {
-		c, r := diffTagsGeneric(tc.Old, tc.New)
-		cm := tagsToMapGeneric(c)
-		rm := tagsToMapGeneric(r)
+		c, r := DiffTagsGeneric(tc.Old, tc.New)
+		cm := TagsToMapGeneric(c)
+		rm := TagsToMapGeneric(r)
 		if !reflect.DeepEqual(cm, tc.Create) {
 			t.Fatalf("%d: bad create: %#v", i, cm)
 		}
@@ -66,7 +66,7 @@ func TestIgnoringTagsGeneric(t *testing.T) {
 		"aws:foo:bar":                   aws.String("baz"),
 	}
 	for k, v := range ignoredTags {
-		if !tagIgnoredGeneric(k) {
+		if !TagIgnoredGeneric(k) {
 			t.Fatalf("Tag %v with value %v not ignored, but should be!", k, *v)
 		}
 	}

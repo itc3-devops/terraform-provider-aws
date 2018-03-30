@@ -54,7 +54,7 @@ func resourceAwsServiceCatalogPortfolio() *schema.Resource {
 				Optional:     true,
 				ValidateFunc: validation.StringLenBetween(1, 20),
 			},
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }

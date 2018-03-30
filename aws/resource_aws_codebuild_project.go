@@ -202,7 +202,7 @@ func resourceAwsCodeBuildProject() *schema.Resource {
 				Default:      "60",
 				ValidateFunc: validation.IntBetween(5, 480),
 			},
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 			"vpc_config": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -269,7 +269,7 @@ func resourceAwsCodeBuildProjectCreate(d *schema.ResourceData, meta interface{})
 	}
 
 	if v, ok := d.GetOk("tags"); ok {
-		params.Tags = tagsFromMapCodeBuild(v.(map[string]interface{}))
+		params.Tags = TagsFromMapCodeBuild(v.(map[string]interface{}))
 	}
 
 	var resp *codebuild.CreateProjectOutput
@@ -474,7 +474,7 @@ func resourceAwsCodeBuildProjectRead(d *schema.ResourceData, meta interface{}) e
 	d.Set("service_role", project.ServiceRole)
 	d.Set("build_timeout", project.TimeoutInMinutes)
 
-	if err := d.Set("tags", tagsToMapCodeBuild(project.Tags)); err != nil {
+	if err := d.Set("tags", TagsToMapCodeBuild(project.Tags)); err != nil {
 		return err
 	}
 
@@ -525,7 +525,7 @@ func resourceAwsCodeBuildProjectUpdate(d *schema.ResourceData, meta interface{})
 
 	// The documentation clearly says "The replacement set of tags for this build project."
 	// But its a slice of pointers so if not set for every update, they get removed.
-	params.Tags = tagsFromMapCodeBuild(d.Get("tags").(map[string]interface{}))
+	params.Tags = TagsFromMapCodeBuild(d.Get("tags").(map[string]interface{}))
 
 	_, err := conn.UpdateProject(params)
 

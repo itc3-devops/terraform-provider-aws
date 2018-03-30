@@ -50,9 +50,9 @@ func TestDiffElasticsearchServiceTags(t *testing.T) {
 	}
 
 	for i, tc := range cases {
-		c, r := diffTagsElasticsearchService(tagsFromMapElasticsearchService(tc.Old), tagsFromMapElasticsearchService(tc.New))
-		cm := tagsToMapElasticsearchService(c)
-		rm := tagsToMapElasticsearchService(r)
+		c, r := DiffTagsElasticsearchService(TagsFromMapElasticsearchService(tc.Old), TagsFromMapElasticsearchService(tc.New))
+		cm := TagsToMapElasticsearchService(c)
+		rm := TagsToMapElasticsearchService(r)
 		if !reflect.DeepEqual(cm, tc.Create) {
 			t.Fatalf("%d: bad create: %#v", i, cm)
 		}
@@ -73,7 +73,7 @@ func TestIgnoringTagsElasticsearchService(t *testing.T) {
 		Value: aws.String("baz"),
 	})
 	for _, tag := range ignoredTags {
-		if !tagIgnoredElasticsearchService(tag) {
+		if !TagIgnoredElasticsearchService(tag) {
 			t.Fatalf("Tag %v with value %v not ignored, but should be!", *tag.Key, *tag.Value)
 		}
 	}
@@ -83,7 +83,7 @@ func TestIgnoringTagsElasticsearchService(t *testing.T) {
 func testAccCheckElasticsearchServiceTags(
 	ts *[]*elasticsearch.Tag, key string, value string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		m := tagsToMapElasticsearchService(*ts)
+		m := TagsToMapElasticsearchService(*ts)
 		v, ok := m[key]
 		if value != "" && !ok {
 			return fmt.Errorf("Missing tag: %s", key)

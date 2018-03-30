@@ -50,7 +50,7 @@ func dataSourceAwsNatGateway() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"tags":   tagsSchemaComputed(),
+			"tags":   TagsSchemaComputed(),
 			"filter": ec2CustomFiltersSchema(),
 		},
 	}

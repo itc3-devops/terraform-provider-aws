@@ -16,7 +16,7 @@ func dataSourceAwsInstances() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"filter":        dataSourceFiltersSchema(),
-			"instance_tags": tagsSchemaComputed(),
+			"instance_tags": TagsSchemaComputed(),
 
 			"ids": {
 				Type:     schema.TypeList,
@@ -61,7 +61,7 @@ func dataSourceAwsInstancesRead(d *schema.ResourceData, meta interface{}) error 
 	}
 	if tagsOk {
 		params.Filters = append(params.Filters, buildEC2TagFilterList(
-			tagsFromMap(tags.(map[string]interface{})),
+			TagsFromMap(tags.(map[string]interface{})),
 		)...)
 	}
 

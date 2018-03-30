@@ -44,9 +44,9 @@ func TestDiffRedshiftTags(t *testing.T) {
 	}
 
 	for i, tc := range cases {
-		c, r := diffTagsRedshift(tagsFromMapRedshift(tc.Old), tagsFromMapRedshift(tc.New))
-		cm := tagsToMapRedshift(c)
-		rm := tagsToMapRedshift(r)
+		c, r := DiffTagsRedshift(TagsFromMapRedshift(tc.Old), TagsFromMapRedshift(tc.New))
+		cm := TagsToMapRedshift(c)
+		rm := TagsToMapRedshift(r)
 		if !reflect.DeepEqual(cm, tc.Create) {
 			t.Fatalf("%d: bad create: %#v", i, cm)
 		}
@@ -67,7 +67,7 @@ func TestIgnoringTagsRedshift(t *testing.T) {
 		Value: aws.String("baz"),
 	})
 	for _, tag := range ignoredTags {
-		if !tagIgnoredRedshift(tag) {
+		if !TagIgnoredRedshift(tag) {
 			t.Fatalf("Tag %v with value %v not ignored, but should be!", *tag.Key, *tag.Value)
 		}
 	}

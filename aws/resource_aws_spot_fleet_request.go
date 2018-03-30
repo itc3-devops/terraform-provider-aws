@@ -403,7 +403,7 @@ func buildSpotFleetLaunchSpecification(d map[string]interface{}, meta interface{
 	if m, ok := d["tags"].(map[string]interface{}); ok && len(m) > 0 {
 		tagsSpec := make([]*ec2.SpotFleetTagSpecification, 0)
 
-		tags := tagsFromMap(m)
+		tags := TagsFromMap(m)
 
 		spec := &ec2.SpotFleetTagSpecification{
 			ResourceType: aws.String("instance"),
@@ -977,7 +977,7 @@ func launchSpecToMap(l *ec2.SpotFleetLaunchSpecification, rootDevName *string) m
 		for _, tagSpecs := range l.TagSpecifications {
 			// only "instance" tags are currently supported: http://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_SpotFleetTagSpecification.html
 			if *(tagSpecs.ResourceType) == "instance" {
-				m["tags"] = tagsToMap(tagSpecs.Tags)
+				m["tags"] = TagsToMap(tagSpecs.Tags)
 			}
 		}
 	}

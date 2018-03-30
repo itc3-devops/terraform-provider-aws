@@ -278,7 +278,7 @@ func testAccCheckEfsFileSystemTags(resourceID string, expectedTags map[string]st
 			FileSystemId: aws.String(rs.Primary.ID),
 		})
 
-		if !reflect.DeepEqual(expectedTags, tagsToMapEFS(resp.Tags)) {
+		if !reflect.DeepEqual(expectedTags, TagsToMapEFS(resp.Tags)) {
 			return fmt.Errorf("Tags mismatch.\nExpected: %#v\nGiven: %#v",
 				expectedTags, resp.Tags)
 		}

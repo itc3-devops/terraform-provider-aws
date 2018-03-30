@@ -8,14 +8,14 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-// setTags is a helper to set the tags for a resource. It expects the
+// SetTags is a helper to set the tags for a resource. It expects the
 // tags field to be named "tags"
-func setTagsOpsworks(conn *opsworks.OpsWorks, d *schema.ResourceData, arn string) error {
+func SetTagsOpsworks(conn *opsworks.OpsWorks, d *schema.ResourceData, arn string) error {
 	if d.HasChange("tags") {
 		oraw, nraw := d.GetChange("tags")
 		o := oraw.(map[string]interface{})
 		n := nraw.(map[string]interface{})
-		create, remove := diffTagsGeneric(o, n)
+		create, remove := DiffTagsGeneric(o, n)
 
 		// Set tags
 		if len(remove) > 0 {

@@ -43,7 +43,7 @@ func resourceAwsCustomerGateway() *schema.Resource {
 				ForceNew: true,
 			},
 
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
@@ -100,7 +100,7 @@ func resourceAwsCustomerGatewayCreate(d *schema.ResourceData, meta interface{}) 
 	}
 
 	// Create tags.
-	if err := setTags(conn, d); err != nil {
+	if err := SetTags(conn, d); err != nil {
 		return err
 	}
 
@@ -201,7 +201,7 @@ func resourceAwsCustomerGatewayRead(d *schema.ResourceData, meta interface{}) er
 	customerGateway := resp.CustomerGateways[0]
 	d.Set("ip_address", customerGateway.IpAddress)
 	d.Set("type", customerGateway.Type)
-	d.Set("tags", tagsToMap(customerGateway.Tags))
+	d.Set("tags", TagsToMap(customerGateway.Tags))
 
 	if *customerGateway.BgpAsn != "" {
 		val, err := strconv.ParseInt(*customerGateway.BgpAsn, 0, 0)
@@ -219,7 +219,7 @@ func resourceAwsCustomerGatewayUpdate(d *schema.ResourceData, meta interface{}) 
 	conn := meta.(*AWSClient).ec2conn
 
 	// Update tags if required.
-	if err := setTags(conn, d); err != nil {
+	if err := SetTags(conn, d); err != nil {
 		return err
 	}
 

@@ -9,9 +9,9 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-// setTags is a helper to set the tags for a resource. It expects the
+// SetTags is a helper to set the tags for a resource. It expects the
 // tags field to be named "tags"
-func setTagsKinesis(conn *kinesis.Kinesis, d *schema.ResourceData) error {
+func SetTagsKinesis(conn *kinesis.Kinesis, d *schema.ResourceData) error {
 
 	sn := d.Get("name").(string)
 
@@ -19,7 +19,7 @@ func setTagsKinesis(conn *kinesis.Kinesis, d *schema.ResourceData) error {
 		oraw, nraw := d.GetChange("tags")
 		o := oraw.(map[string]interface{})
 		n := nraw.(map[string]interface{})
-		create, remove := diffTagsKinesis(tagsFromMapKinesis(o), tagsFromMapKinesis(n))
+		create, remove := DiffTagsKinesis(TagsFromMapKinesis(o), TagsFromMapKinesis(n))
 
 		// Set tags
 		if len(remove) > 0 {
@@ -59,10 +59,10 @@ func setTagsKinesis(conn *kinesis.Kinesis, d *schema.ResourceData) error {
 	return nil
 }
 
-// diffTags takes our tags locally and the ones remotely and returns
+// DiffTags takes our tags locally and the ones remotely and returns
 // the set of tags that must be created, and the set of tags that must
 // be destroyed.
-func diffTagsKinesis(oldTags, newTags []*kinesis.Tag) ([]*kinesis.Tag, []*kinesis.Tag) {
+func DiffTagsKinesis(oldTags, newTags []*kinesis.Tag) ([]*kinesis.Tag, []*kinesis.Tag) {
 	// First, we're creating everything we have
 	create := make(map[string]interface{})
 	for _, t := range newTags {
@@ -79,18 +79,18 @@ func diffTagsKinesis(oldTags, newTags []*kinesis.Tag) ([]*kinesis.Tag, []*kinesi
 		}
 	}
 
-	return tagsFromMapKinesis(create), remove
+	return TagsFromMapKinesis(create), remove
 }
 
-// tagsFromMap returns the tags for the given map of data.
-func tagsFromMapKinesis(m map[string]interface{}) []*kinesis.Tag {
+// TagsFromMap returns the tags for the given map of data.
+func TagsFromMapKinesis(m map[string]interface{}) []*kinesis.Tag {
 	var result []*kinesis.Tag
 	for k, v := range m {
 		t := &kinesis.Tag{
 			Key:   aws.String(k),
 			Value: aws.String(v.(string)),
 		}
-		if !tagIgnoredKinesis(t) {
+		if !TagIgnoredKinesis(t) {
 			result = append(result, t)
 		}
 	}
@@ -98,11 +98,11 @@ func tagsFromMapKinesis(m map[string]interface{}) []*kinesis.Tag {
 	return result
 }
 
-// tagsToMap turns the list of tags into a map.
-func tagsToMapKinesis(ts []*kinesis.Tag) map[string]string {
+// TagsToMap turns the list of tags into a map.
+func TagsToMapKinesis(ts []*kinesis.Tag) map[string]string {
 	result := make(map[string]string)
 	for _, t := range ts {
-		if !tagIgnoredKinesis(t) {
+		if !TagIgnoredKinesis(t) {
 			result[*t.Key] = *t.Value
 		}
 	}
@@ -112,7 +112,7 @@ func tagsToMapKinesis(ts []*kinesis.Tag) map[string]string {
 
 // compare a tag against a list of strings and checks if it should
 // be ignored or not
-func tagIgnoredKinesis(t *kinesis.Tag) bool {
+func TagIgnoredKinesis(t *kinesis.Tag) bool {
 	filter := []string{"^aws:"}
 	for _, v := range filter {
 		log.Printf("[DEBUG] Matching %v with %v\n", v, *t.Key)

@@ -71,7 +71,7 @@ func resourceAwsRoute53Zone() *schema.Resource {
 				Computed: true,
 			},
 
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 
 			"force_destroy": &schema.Schema{
 				Type:     schema.TypeBool,
@@ -225,7 +225,7 @@ func resourceAwsRoute53ZoneRead(d *schema.ResourceData, meta interface{}) error 
 		tags = resp.ResourceTagSet.Tags
 	}
 
-	if err := d.Set("tags", tagsToMapR53(tags)); err != nil {
+	if err := d.Set("tags", TagsToMapR53(tags)); err != nil {
 		return err
 	}
 
@@ -251,7 +251,7 @@ func resourceAwsRoute53ZoneUpdate(d *schema.ResourceData, meta interface{}) erro
 		}
 	}
 
-	if err := setTagsR53(conn, d, "hostedzone"); err != nil {
+	if err := SetTagsR53(conn, d, "hostedzone"); err != nil {
 		return err
 	} else {
 		d.SetPartial("tags")

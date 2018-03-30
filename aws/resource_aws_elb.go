@@ -243,7 +243,7 @@ func resourceAwsElb() *schema.Resource {
 				Computed: true,
 			},
 
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
@@ -269,7 +269,7 @@ func resourceAwsElbCreate(d *schema.ResourceData, meta interface{}) error {
 		d.Set("name", elbName)
 	}
 
-	tags := tagsFromMapELB(d.Get("tags").(map[string]interface{}))
+	tags := TagsFromMapELB(d.Get("tags").(map[string]interface{}))
 	// Provision the elb
 	elbOpts := &elb.CreateLoadBalancerInput{
 		LoadBalancerName: aws.String(elbName),
@@ -327,7 +327,7 @@ func resourceAwsElbCreate(d *schema.ResourceData, meta interface{}) error {
 	d.SetPartial("security_groups")
 	d.SetPartial("subnets")
 
-	d.Set("tags", tagsToMapELB(tags))
+	d.Set("tags", TagsToMapELB(tags))
 
 	return resourceAwsElbUpdate(d, meta)
 }
@@ -451,7 +451,7 @@ func flattenAwsELbResource(d *schema.ResourceData, ec2conn *ec2.EC2, elbconn *el
 	if len(resp.TagDescriptions) > 0 {
 		et = resp.TagDescriptions[0].Tags
 	}
-	d.Set("tags", tagsToMapELB(et))
+	d.Set("tags", TagsToMapELB(et))
 
 	// There's only one health check, so save that to state as we
 	// currently can
@@ -782,7 +782,7 @@ func resourceAwsElbUpdate(d *schema.ResourceData, meta interface{}) error {
 		d.SetPartial("subnets")
 	}
 
-	if err := setTagsELB(elbconn, d); err != nil {
+	if err := SetTagsELB(elbconn, d); err != nil {
 		return err
 	}
 

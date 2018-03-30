@@ -552,7 +552,7 @@ func resourceAwsCloudFrontDistribution() *schema.Resource {
 				Default:  false,
 			},
 
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
@@ -563,7 +563,7 @@ func resourceAwsCloudFrontDistributionCreate(d *schema.ResourceData, meta interf
 	params := &cloudfront.CreateDistributionWithTagsInput{
 		DistributionConfigWithTags: &cloudfront.DistributionConfigWithTags{
 			DistributionConfig: expandDistributionConfig(d),
-			Tags:               tagsFromMapCloudFront(d.Get("tags").(map[string]interface{})),
+			Tags:               TagsFromMapCloudFront(d.Get("tags").(map[string]interface{})),
 		},
 	}
 
@@ -620,7 +620,7 @@ func resourceAwsCloudFrontDistributionRead(d *schema.ResourceData, meta interfac
 			d.Id(), d.Get("arn").(string)), err)
 	}
 
-	if err := d.Set("tags", tagsToMapCloudFront(tagResp.Tags)); err != nil {
+	if err := d.Set("tags", TagsToMapCloudFront(tagResp.Tags)); err != nil {
 		return err
 	}
 
@@ -639,7 +639,7 @@ func resourceAwsCloudFrontDistributionUpdate(d *schema.ResourceData, meta interf
 		return err
 	}
 
-	if err := setTagsCloudFront(conn, d, d.Get("arn").(string)); err != nil {
+	if err := SetTagsCloudFront(conn, d, d.Get("arn").(string)); err != nil {
 		return err
 	}
 

@@ -3099,8 +3099,8 @@ func (s DescribeImagesFilter) GoString() string {
 	return s.String()
 }
 
-// SetTagStatus sets the TagStatus field's value.
-func (s *DescribeImagesFilter) SetTagStatus(v string) *DescribeImagesFilter {
+// SetTagstatus sets the TagStatus field's value.
+func (s *DescribeImagesFilter) SetTagstatus(v string) *DescribeImagesFilter {
 	s.TagStatus = &v
 	return s
 }
@@ -4302,8 +4302,8 @@ func (s LifecyclePolicyPreviewFilter) GoString() string {
 	return s.String()
 }
 
-// SetTagStatus sets the TagStatus field's value.
-func (s *LifecyclePolicyPreviewFilter) SetTagStatus(v string) *LifecyclePolicyPreviewFilter {
+// SetTagstatus sets the TagStatus field's value.
+func (s *LifecyclePolicyPreviewFilter) SetTagstatus(v string) *LifecyclePolicyPreviewFilter {
 	s.TagStatus = &v
 	return s
 }
@@ -4436,8 +4436,8 @@ func (s ListImagesFilter) GoString() string {
 	return s.String()
 }
 
-// SetTagStatus sets the TagStatus field's value.
-func (s *ListImagesFilter) SetTagStatus(v string) *ListImagesFilter {
+// SetTagstatus sets the TagStatus field's value.
+func (s *ListImagesFilter) SetTagstatus(v string) *ListImagesFilter {
 	s.TagStatus = &v
 	return s
 }

@@ -24,21 +24,21 @@ func getTagsDX(conn *directconnect.DirectConnect, d *schema.ResourceData, arn st
 		tags = resp.ResourceTags[0].Tags
 	}
 
-	if err := d.Set("tags", tagsToMapDX(tags)); err != nil {
+	if err := d.Set("tags", TagsToMapDX(tags)); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-// setTags is a helper to set the tags for a resource. It expects the
+// SetTags is a helper to set the tags for a resource. It expects the
 // tags field to be named "tags"
-func setTagsDX(conn *directconnect.DirectConnect, d *schema.ResourceData, arn string) error {
+func SetTagsDX(conn *directconnect.DirectConnect, d *schema.ResourceData, arn string) error {
 	if d.HasChange("tags") {
 		oraw, nraw := d.GetChange("tags")
 		o := oraw.(map[string]interface{})
 		n := nraw.(map[string]interface{})
-		create, remove := diffTagsDX(tagsFromMapDX(o), tagsFromMapDX(n))
+		create, remove := DiffTagsDX(TagsFromMapDX(o), TagsFromMapDX(n))
 
 		// Set tags
 		if len(remove) > 0 {
@@ -71,10 +71,10 @@ func setTagsDX(conn *directconnect.DirectConnect, d *schema.ResourceData, arn st
 	return nil
 }
 
-// diffTags takes our tags locally and the ones remotely and returns
+// DiffTags takes our tags locally and the ones remotely and returns
 // the set of tags that must be created, and the set of tags that must
 // be destroyed.
-func diffTagsDX(oldTags, newTags []*directconnect.Tag) ([]*directconnect.Tag, []*directconnect.Tag) {
+func DiffTagsDX(oldTags, newTags []*directconnect.Tag) ([]*directconnect.Tag, []*directconnect.Tag) {
 	// First, we're creating everything we have
 	create := make(map[string]interface{})
 	for _, t := range newTags {
@@ -91,18 +91,18 @@ func diffTagsDX(oldTags, newTags []*directconnect.Tag) ([]*directconnect.Tag, []
 		}
 	}
 
-	return tagsFromMapDX(create), remove
+	return TagsFromMapDX(create), remove
 }
 
-// tagsFromMap returns the tags for the given map of data.
-func tagsFromMapDX(m map[string]interface{}) []*directconnect.Tag {
+// TagsFromMap returns the tags for the given map of data.
+func TagsFromMapDX(m map[string]interface{}) []*directconnect.Tag {
 	result := make([]*directconnect.Tag, 0, len(m))
 	for k, v := range m {
 		t := &directconnect.Tag{
 			Key:   aws.String(k),
 			Value: aws.String(v.(string)),
 		}
-		if !tagIgnoredDX(t) {
+		if !TagIgnoredDX(t) {
 			result = append(result, t)
 		}
 	}
@@ -110,11 +110,11 @@ func tagsFromMapDX(m map[string]interface{}) []*directconnect.Tag {
 	return result
 }
 
-// tagsToMap turns the list of tags into a map.
-func tagsToMapDX(ts []*directconnect.Tag) map[string]string {
+// TagsToMap turns the list of tags into a map.
+func TagsToMapDX(ts []*directconnect.Tag) map[string]string {
 	result := make(map[string]string)
 	for _, t := range ts {
-		if !tagIgnoredDX(t) {
+		if !TagIgnoredDX(t) {
 			result[aws.StringValue(t.Key)] = aws.StringValue(t.Value)
 		}
 	}
@@ -124,7 +124,7 @@ func tagsToMapDX(ts []*directconnect.Tag) map[string]string {
 
 // compare a tag against a list of strings and checks if it should
 // be ignored or not
-func tagIgnoredDX(t *directconnect.Tag) bool {
+func TagIgnoredDX(t *directconnect.Tag) bool {
 	filter := []string{"^aws:"}
 	for _, v := range filter {
 		log.Printf("[DEBUG] Matching %v with %v\n", v, *t.Key)

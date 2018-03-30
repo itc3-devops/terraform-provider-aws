@@ -8,10 +8,10 @@ import (
 	"github.com/aws/aws-sdk-go/service/inspector"
 )
 
-// diffTags takes our tags locally and the ones remotely and returns
+// DiffTags takes our tags locally and the ones remotely and returns
 // the set of tags that must be created, and the set of tags that must
 // be destroyed.
-func diffTagsInspector(oldTags, newTags []*inspector.ResourceGroupTag) ([]*inspector.ResourceGroupTag, []*inspector.ResourceGroupTag) {
+func DiffTagsInspector(oldTags, newTags []*inspector.ResourceGroupTag) ([]*inspector.ResourceGroupTag, []*inspector.ResourceGroupTag) {
 	// First, we're creating everything we have
 	create := make(map[string]interface{})
 	for _, t := range newTags {
@@ -28,18 +28,18 @@ func diffTagsInspector(oldTags, newTags []*inspector.ResourceGroupTag) ([]*inspe
 		}
 	}
 
-	return tagsFromMapInspector(create), remove
+	return TagsFromMapInspector(create), remove
 }
 
-// tagsFromMap returns the tags for the given map of data.
-func tagsFromMapInspector(m map[string]interface{}) []*inspector.ResourceGroupTag {
+// TagsFromMap returns the tags for the given map of data.
+func TagsFromMapInspector(m map[string]interface{}) []*inspector.ResourceGroupTag {
 	var result []*inspector.ResourceGroupTag
 	for k, v := range m {
 		t := &inspector.ResourceGroupTag{
 			Key:   aws.String(k),
 			Value: aws.String(v.(string)),
 		}
-		if !tagIgnoredInspector(t) {
+		if !TagIgnoredInspector(t) {
 			result = append(result, t)
 		}
 	}
@@ -47,11 +47,11 @@ func tagsFromMapInspector(m map[string]interface{}) []*inspector.ResourceGroupTa
 	return result
 }
 
-// tagsToMap turns the list of tags into a map.
-func tagsToMapInspector(ts []*inspector.ResourceGroupTag) map[string]string {
+// TagsToMap turns the list of tags into a map.
+func TagsToMapInspector(ts []*inspector.ResourceGroupTag) map[string]string {
 	result := make(map[string]string)
 	for _, t := range ts {
-		if !tagIgnoredInspector(t) {
+		if !TagIgnoredInspector(t) {
 			result[*t.Key] = *t.Value
 		}
 	}
@@ -61,7 +61,7 @@ func tagsToMapInspector(ts []*inspector.ResourceGroupTag) map[string]string {
 
 // compare a tag against a list of strings and checks if it should
 // be ignored or not
-func tagIgnoredInspector(t *inspector.ResourceGroupTag) bool {
+func TagIgnoredInspector(t *inspector.ResourceGroupTag) bool {
 	filter := []string{"^aws:"}
 	for _, v := range filter {
 		log.Printf("[DEBUG] Matching %v with %v\n", v, *t.Key)

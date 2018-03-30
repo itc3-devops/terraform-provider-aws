@@ -10,14 +10,14 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-// setTags is a helper to set the tags for a resource. It expects the
+// SetTags is a helper to set the tags for a resource. It expects the
 // tags field to be named "tags"
-func setTagsS3(conn *s3.S3, d *schema.ResourceData) error {
+func SetTagsS3(conn *s3.S3, d *schema.ResourceData) error {
 	if d.HasChange("tags") {
 		oraw, nraw := d.GetChange("tags")
 		o := oraw.(map[string]interface{})
 		n := nraw.(map[string]interface{})
-		create, remove := diffTagsS3(tagsFromMapS3(o), tagsFromMapS3(n))
+		create, remove := DiffTagsS3(TagsFromMapS3(o), TagsFromMapS3(n))
 
 		// Set tags
 		if len(remove) > 0 {
@@ -52,10 +52,10 @@ func setTagsS3(conn *s3.S3, d *schema.ResourceData) error {
 	return nil
 }
 
-// diffTags takes our tags locally and the ones remotely and returns
+// DiffTags takes our tags locally and the ones remotely and returns
 // the set of tags that must be created, and the set of tags that must
 // be destroyed.
-func diffTagsS3(oldTags, newTags []*s3.Tag) ([]*s3.Tag, []*s3.Tag) {
+func DiffTagsS3(oldTags, newTags []*s3.Tag) ([]*s3.Tag, []*s3.Tag) {
 	// First, we're creating everything we have
 	create := make(map[string]interface{})
 	for _, t := range newTags {
@@ -72,18 +72,18 @@ func diffTagsS3(oldTags, newTags []*s3.Tag) ([]*s3.Tag, []*s3.Tag) {
 		}
 	}
 
-	return tagsFromMapS3(create), remove
+	return TagsFromMapS3(create), remove
 }
 
-// tagsFromMap returns the tags for the given map of data.
-func tagsFromMapS3(m map[string]interface{}) []*s3.Tag {
+// TagsFromMap returns the tags for the given map of data.
+func TagsFromMapS3(m map[string]interface{}) []*s3.Tag {
 	result := make([]*s3.Tag, 0, len(m))
 	for k, v := range m {
 		t := &s3.Tag{
 			Key:   aws.String(k),
 			Value: aws.String(v.(string)),
 		}
-		if !tagIgnoredS3(t) {
+		if !TagIgnoredS3(t) {
 			result = append(result, t)
 		}
 	}
@@ -91,11 +91,11 @@ func tagsFromMapS3(m map[string]interface{}) []*s3.Tag {
 	return result
 }
 
-// tagsToMap turns the list of tags into a map.
-func tagsToMapS3(ts []*s3.Tag) map[string]string {
+// TagsToMap turns the list of tags into a map.
+func TagsToMapS3(ts []*s3.Tag) map[string]string {
 	result := make(map[string]string)
 	for _, t := range ts {
-		if !tagIgnoredS3(t) {
+		if !TagIgnoredS3(t) {
 			result[*t.Key] = *t.Value
 		}
 	}
@@ -124,7 +124,7 @@ func getTagSetS3(s3conn *s3.S3, bucket string) ([]*s3.Tag, error) {
 
 // compare a tag against a list of strings and checks if it should
 // be ignored or not
-func tagIgnoredS3(t *s3.Tag) bool {
+func TagIgnoredS3(t *s3.Tag) bool {
 	filter := []string{"^aws:"}
 	for _, v := range filter {
 		log.Printf("[DEBUG] Matching %v with %v\n", v, *t.Key)

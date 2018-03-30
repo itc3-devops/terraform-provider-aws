@@ -209,7 +209,7 @@ func resourceAwsLambdaFunction() *schema.Resource {
 				ValidateFunc: validateArn,
 			},
 
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 
 		CustomizeDiff: updateComputedAttributesOnPublish,
@@ -357,7 +357,7 @@ func resourceAwsLambdaFunctionCreate(d *schema.ResourceData, meta interface{}) e
 	}
 
 	if v, exists := d.GetOk("tags"); exists {
-		params.Tags = tagsFromMapGeneric(v.(map[string]interface{}))
+		params.Tags = TagsFromMapGeneric(v.(map[string]interface{}))
 	}
 
 	// IAM changes can take 1 minute to propagate in AWS
@@ -472,7 +472,7 @@ func resourceAwsLambdaFunctionRead(d *schema.ResourceData, meta interface{}) err
 	d.Set("runtime", function.Runtime)
 	d.Set("timeout", function.Timeout)
 	d.Set("kms_key_arn", function.KMSKeyArn)
-	d.Set("tags", tagsToMapGeneric(getFunctionOutput.Tags))
+	d.Set("tags", TagsToMapGeneric(getFunctionOutput.Tags))
 
 	config := flattenLambdaVpcConfigResponse(function.VpcConfig)
 	log.Printf("[INFO] Setting Lambda %s VPC config %#v from API", d.Id(), config)
@@ -593,7 +593,7 @@ func resourceAwsLambdaFunctionUpdate(d *schema.ResourceData, meta interface{}) e
 	d.Partial(true)
 
 	arn := d.Get("arn").(string)
-	if tagErr := setTagsLambda(conn, d, arn); tagErr != nil {
+	if tagErr := SetTagsLambda(conn, d, arn); tagErr != nil {
 		return tagErr
 	}
 	d.SetPartial("tags")

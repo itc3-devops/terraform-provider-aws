@@ -71,7 +71,7 @@ func resourceAwsAcmCertificate() *schema.Resource {
 				Computed: true,
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
@@ -100,7 +100,7 @@ func resourceAwsAcmCertificateCreate(d *schema.ResourceData, meta interface{}) e
 	if v, ok := d.GetOk("tags"); ok {
 		params := &acm.AddTagsToCertificateInput{
 			CertificateArn: resp.CertificateArn,
-			Tags:           tagsFromMapACM(v.(map[string]interface{})),
+			Tags:           TagsFromMapACM(v.(map[string]interface{})),
 		}
 		_, err := acmconn.AddTagsToCertificate(params)
 
@@ -156,7 +156,7 @@ func resourceAwsAcmCertificateRead(d *schema.ResourceData, meta interface{}) err
 		}
 
 		tagResp, err := acmconn.ListTagsForCertificate(params)
-		if err := d.Set("tags", tagsToMapACM(tagResp.Tags)); err != nil {
+		if err := d.Set("tags", TagsToMapACM(tagResp.Tags)); err != nil {
 			return resource.NonRetryableError(err)
 		}
 
@@ -178,7 +178,7 @@ func resourceAwsAcmCertificateGuessValidationMethod(domainValidationOptions []ma
 func resourceAwsAcmCertificateUpdate(d *schema.ResourceData, meta interface{}) error {
 	if d.HasChange("tags") {
 		acmconn := meta.(*AWSClient).acmconn
-		err := setTagsACM(acmconn, d)
+		err := SetTagsACM(acmconn, d)
 		if err != nil {
 			return err
 		}

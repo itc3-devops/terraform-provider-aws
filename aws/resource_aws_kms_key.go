@@ -73,7 +73,7 @@ func resourceAwsKmsKey() *schema.Resource {
 				Optional:     true,
 				ValidateFunc: validation.IntBetween(7, 30),
 			},
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
@@ -93,7 +93,7 @@ func resourceAwsKmsKeyCreate(d *schema.ResourceData, meta interface{}) error {
 		req.Policy = aws.String(v.(string))
 	}
 	if v, exists := d.GetOk("tags"); exists {
-		req.Tags = tagsFromMapKMS(v.(map[string]interface{}))
+		req.Tags = TagsFromMapKMS(v.(map[string]interface{}))
 	}
 
 	var resp *kms.CreateKeyOutput
@@ -193,7 +193,7 @@ func resourceAwsKmsKeyRead(d *schema.ResourceData, meta interface{}) error {
 		return fmt.Errorf("Failed to get KMS key tags (key: %s): %s", d.Get("key_id").(string), err)
 	}
 	tagList := tOut.(*kms.ListResourceTagsOutput)
-	d.Set("tags", tagsToMapKMS(tagList.Tags))
+	d.Set("tags", TagsToMapKMS(tagList.Tags))
 
 	return nil
 }
@@ -234,7 +234,7 @@ func resourceAwsKmsKeyUpdate(d *schema.ResourceData, meta interface{}) error {
 		}
 	}
 
-	if err := setTagsKMS(conn, d, d.Id()); err != nil {
+	if err := SetTagsKMS(conn, d, d.Id()); err != nil {
 		return err
 	}
 

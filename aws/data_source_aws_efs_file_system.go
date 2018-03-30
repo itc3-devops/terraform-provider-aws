@@ -44,7 +44,7 @@ func dataSourceAwsEfsFileSystem() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"tags": tagsSchemaComputed(),
+			"tags": TagsSchemaComputed(),
 		},
 	}
 }
@@ -100,7 +100,7 @@ func dataSourceAwsEfsFileSystemRead(d *schema.ResourceData, meta interface{}) er
 		}
 	}
 
-	err = d.Set("tags", tagsToMapEFS(tags))
+	err = d.Set("tags", TagsToMapEFS(tags))
 	if err != nil {
 		return err
 	}

@@ -85,7 +85,7 @@ func resourceAwsEbsSnapshotCreate(d *schema.ResourceData, meta interface{}) erro
 		return err
 	}
 
-	if err := setTags(conn, d); err != nil {
+	if err := SetTags(conn, d); err != nil {
 		log.Printf("[WARN] error setting tags: %s", err)
 	}
 
@@ -124,7 +124,7 @@ func resourceAwsEbsSnapshotRead(d *schema.ResourceData, meta interface{}) error 
 	d.Set("kms_key_id", snapshot.KmsKeyId)
 	d.Set("volume_size", snapshot.VolumeSize)
 
-	if err := d.Set("tags", tagsToMap(snapshot.Tags)); err != nil {
+	if err := d.Set("tags", TagsToMap(snapshot.Tags)); err != nil {
 		log.Printf("[WARN] error saving tags to state: %s", err)
 	}
 

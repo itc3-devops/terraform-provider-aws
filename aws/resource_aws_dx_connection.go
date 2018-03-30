@@ -43,7 +43,7 @@ func resourceAwsDxConnection() *schema.Resource {
 				Required: true,
 				ForceNew: true,
 			},
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
@@ -129,7 +129,7 @@ func resourceAwsDxConnectionUpdate(d *schema.ResourceData, meta interface{}) err
 		AccountID: meta.(*AWSClient).accountid,
 		Resource:  fmt.Sprintf("dxcon/%s", d.Id()),
 	}.String()
-	if err := setTagsDX(conn, d, arn); err != nil {
+	if err := SetTagsDX(conn, d, arn); err != nil {
 		return err
 	}
 

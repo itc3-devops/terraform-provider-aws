@@ -75,7 +75,7 @@ func dataSourceAwsVpcPeeringConnection() *schema.Resource {
 				Elem:     schema.TypeBool,
 			},
 			"filter": ec2CustomFiltersSchema(),
-			"tags":   tagsSchemaComputed(),
+			"tags":   TagsSchemaComputed(),
 		},
 	}
 }
@@ -103,7 +103,7 @@ func dataSourceAwsVpcPeeringConnectionRead(d *schema.ResourceData, meta interfac
 		},
 	)
 	req.Filters = append(req.Filters, buildEC2TagFilterList(
-		tagsFromMap(d.Get("tags").(map[string]interface{})),
+		TagsFromMap(d.Get("tags").(map[string]interface{})),
 	)...)
 	req.Filters = append(req.Filters, buildEC2CustomFilterList(
 		d.Get("filter").(*schema.Set),
@@ -137,7 +137,7 @@ func dataSourceAwsVpcPeeringConnectionRead(d *schema.ResourceData, meta interfac
 	d.Set("peer_owner_id", pcx.AccepterVpcInfo.OwnerId)
 	d.Set("peer_cidr_block", pcx.AccepterVpcInfo.CidrBlock)
 	d.Set("peer_region", pcx.AccepterVpcInfo.Region)
-	d.Set("tags", tagsToMap(pcx.Tags))
+	d.Set("tags", TagsToMap(pcx.Tags))
 
 	if pcx.AccepterVpcInfo.PeeringOptions != nil {
 		if err := d.Set("accepter", flattenPeeringOptions(pcx.AccepterVpcInfo.PeeringOptions)[0]); err != nil {

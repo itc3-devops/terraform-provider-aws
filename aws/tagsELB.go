@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-// setTags is a helper to set the tags for a resource. It expects the
+// SetTags is a helper to set the tags for a resource. It expects the
 // tags field to be named "tags"
-func setTagsELB(conn *elb.ELB, d *schema.ResourceData) error {
+func SetTagsELB(conn *elb.ELB, d *schema.ResourceData) error {
 	if d.HasChange("tags") {
 		oraw, nraw := d.GetChange("tags")
 		o := oraw.(map[string]interface{})
 		n := nraw.(map[string]interface{})
-		create, remove := diffTagsELB(tagsFromMapELB(o), tagsFromMapELB(n))
+		create, remove := DiffTagsELB(TagsFromMapELB(o), TagsFromMapELB(n))
 
 		// Set tags
 		if len(remove) > 0 {
@@ -48,10 +48,10 @@ func setTagsELB(conn *elb.ELB, d *schema.ResourceData) error {
 	return nil
 }
 
-// diffTags takes our tags locally and the ones remotely and returns
+// DiffTags takes our tags locally and the ones remotely and returns
 // the set of tags that must be created, and the set of tags that must
 // be destroyed.
-func diffTagsELB(oldTags, newTags []*elb.Tag) ([]*elb.Tag, []*elb.Tag) {
+func DiffTagsELB(oldTags, newTags []*elb.Tag) ([]*elb.Tag, []*elb.Tag) {
 	// First, we're creating everything we have
 	create := make(map[string]interface{})
 	for _, t := range newTags {
@@ -68,18 +68,18 @@ func diffTagsELB(oldTags, newTags []*elb.Tag) ([]*elb.Tag, []*elb.Tag) {
 		}
 	}
 
-	return tagsFromMapELB(create), remove
+	return TagsFromMapELB(create), remove
 }
 
-// tagsFromMap returns the tags for the given map of data.
-func tagsFromMapELB(m map[string]interface{}) []*elb.Tag {
+// TagsFromMap returns the tags for the given map of data.
+func TagsFromMapELB(m map[string]interface{}) []*elb.Tag {
 	var result []*elb.Tag
 	for k, v := range m {
 		t := &elb.Tag{
 			Key:   aws.String(k),
 			Value: aws.String(v.(string)),
 		}
-		if !tagIgnoredELB(t) {
+		if !TagIgnoredELB(t) {
 			result = append(result, t)
 		}
 	}
@@ -87,11 +87,11 @@ func tagsFromMapELB(m map[string]interface{}) []*elb.Tag {
 	return result
 }
 
-// tagsToMap turns the list of tags into a map.
-func tagsToMapELB(ts []*elb.Tag) map[string]string {
+// TagsToMap turns the list of tags into a map.
+func TagsToMapELB(ts []*elb.Tag) map[string]string {
 	result := make(map[string]string)
 	for _, t := range ts {
-		if !tagIgnoredELB(t) {
+		if !TagIgnoredELB(t) {
 			result[*t.Key] = *t.Value
 		}
 	}
@@ -101,7 +101,7 @@ func tagsToMapELB(ts []*elb.Tag) map[string]string {
 
 // compare a tag against a list of strings and checks if it should
 // be ignored or not
-func tagIgnoredELB(t *elb.Tag) bool {
+func TagIgnoredELB(t *elb.Tag) bool {
 	filter := []string{"^aws:"}
 	for _, v := range filter {
 		log.Printf("[DEBUG] Matching %v with %v\n", v, *t.Key)

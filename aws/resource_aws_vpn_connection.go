@@ -131,7 +131,7 @@ func resourceAwsVpnConnection() *schema.Resource {
 				ValidateFunc: validateVpnConnectionTunnelPreSharedKey,
 			},
 
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 
 			// Begin read only attributes
 			"customer_gateway_configuration": {
@@ -334,7 +334,7 @@ func resourceAwsVpnConnectionCreate(d *schema.ResourceData, meta interface{}) er
 	}
 
 	// Create tags.
-	if err := setTags(conn, d); err != nil {
+	if err := SetTags(conn, d); err != nil {
 		return err
 	}
 
@@ -397,7 +397,7 @@ func resourceAwsVpnConnectionRead(d *schema.ResourceData, meta interface{}) erro
 	d.Set("vpn_gateway_id", vpnConnection.VpnGatewayId)
 	d.Set("customer_gateway_id", vpnConnection.CustomerGatewayId)
 	d.Set("type", vpnConnection.Type)
-	d.Set("tags", tagsToMap(vpnConnection.Tags))
+	d.Set("tags", TagsToMap(vpnConnection.Tags))
 
 	if vpnConnection.Options != nil {
 		if err := d.Set("static_routes_only", vpnConnection.Options.StaticRoutesOnly); err != nil {
@@ -444,7 +444,7 @@ func resourceAwsVpnConnectionUpdate(d *schema.ResourceData, meta interface{}) er
 	conn := meta.(*AWSClient).ec2conn
 
 	// Update tags if required.
-	if err := setTags(conn, d); err != nil {
+	if err := SetTags(conn, d); err != nil {
 		return err
 	}
 

@@ -62,7 +62,7 @@ func resourceAwsDirectoryServiceDirectory() *schema.Resource {
 				Computed: true,
 				ForceNew: true,
 			},
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 			"vpc_settings": {
 				Type:     schema.TypeList,
 				MaxItems: 1,
@@ -407,7 +407,7 @@ func resourceAwsDirectoryServiceDirectoryUpdate(d *schema.ResourceData, meta int
 		}
 	}
 
-	if err := setTagsDS(dsconn, d, d.Id()); err != nil {
+	if err := SetTagsDS(dsconn, d, d.Id()); err != nil {
 		return err
 	}
 
@@ -463,7 +463,7 @@ func resourceAwsDirectoryServiceDirectoryRead(d *schema.ResourceData, meta inter
 	if err != nil {
 		return fmt.Errorf("Failed to get Directory service tags (id: %s): %s", d.Id(), err)
 	}
-	d.Set("tags", tagsToMapDS(tagList.Tags))
+	d.Set("tags", TagsToMapDS(tagList.Tags))
 
 	return nil
 }

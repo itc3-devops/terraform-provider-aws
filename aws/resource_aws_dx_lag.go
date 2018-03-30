@@ -55,7 +55,7 @@ func resourceAwsDxLag() *schema.Resource {
 				Optional: true,
 				Default:  false,
 			},
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
@@ -170,7 +170,7 @@ func resourceAwsDxLagUpdate(d *schema.ResourceData, meta interface{}) error {
 		AccountID: meta.(*AWSClient).accountid,
 		Resource:  fmt.Sprintf("dxlag/%s", d.Id()),
 	}.String()
-	if err := setTagsDX(conn, d, arn); err != nil {
+	if err := SetTagsDX(conn, d, arn); err != nil {
 		return err
 	} else {
 		d.SetPartial("tags")

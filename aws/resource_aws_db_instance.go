@@ -350,14 +350,14 @@ func resourceAwsDbInstance() *schema.Resource {
 				Computed: true,
 			},
 
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
 
 func resourceAwsDbInstanceCreate(d *schema.ResourceData, meta interface{}) error {
 	conn := meta.(*AWSClient).rdsconn
-	tags := tagsFromMapRDS(d.Get("tags").(map[string]interface{}))
+	tags := TagsFromMapRDS(d.Get("tags").(map[string]interface{}))
 
 	var identifier string
 	if v, ok := d.GetOk("identifier"); ok {
@@ -798,7 +798,7 @@ func resourceAwsDbInstanceRead(d *schema.ResourceData, meta interface{}) error {
 		if len(resp.TagList) > 0 {
 			dt = resp.TagList
 		}
-		d.Set("tags", tagsToMapRDS(dt))
+		d.Set("tags", TagsToMapRDS(dt))
 	}
 
 	// Create an empty schema.Set to hold all vpc security group ids
@@ -1074,7 +1074,7 @@ func resourceAwsDbInstanceUpdate(d *schema.ResourceData, meta interface{}) error
 	}
 
 	if arn, err := buildRDSARN(d.Id(), meta.(*AWSClient).partition, meta.(*AWSClient).accountid, meta.(*AWSClient).region); err == nil {
-		if err := setTagsRDS(conn, d, arn); err != nil {
+		if err := SetTagsRDS(conn, d, arn); err != nil {
 			return err
 		} else {
 			d.SetPartial("tags")

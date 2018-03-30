@@ -50,9 +50,9 @@ func TestDiffELBTags(t *testing.T) {
 	}
 
 	for i, tc := range cases {
-		c, r := diffTagsELB(tagsFromMapELB(tc.Old), tagsFromMapELB(tc.New))
-		cm := tagsToMapELB(c)
-		rm := tagsToMapELB(r)
+		c, r := DiffTagsELB(TagsFromMapELB(tc.Old), TagsFromMapELB(tc.New))
+		cm := TagsToMapELB(c)
+		rm := TagsToMapELB(r)
 		if !reflect.DeepEqual(cm, tc.Create) {
 			t.Fatalf("%d: bad create: %#v", i, cm)
 		}
@@ -73,7 +73,7 @@ func TestIgnoringTagsELB(t *testing.T) {
 		Value: aws.String("baz"),
 	})
 	for _, tag := range ignoredTags {
-		if !tagIgnoredELB(tag) {
+		if !TagIgnoredELB(tag) {
 			t.Fatalf("Tag %v with value %v not ignored, but should be!", *tag.Key, *tag.Value)
 		}
 	}
@@ -83,7 +83,7 @@ func TestIgnoringTagsELB(t *testing.T) {
 func testAccCheckELBTags(
 	ts *[]*elb.Tag, key string, value string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		m := tagsToMapELB(*ts)
+		m := TagsToMapELB(*ts)
 		v, ok := m[key]
 		if value != "" && !ok {
 			return fmt.Errorf("Missing tag: %s", key)

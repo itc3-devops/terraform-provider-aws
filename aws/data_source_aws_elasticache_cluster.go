@@ -144,7 +144,7 @@ func dataSourceAwsElastiCacheCluster() *schema.Resource {
 				},
 			},
 
-			"tags": tagsSchemaComputed(),
+			"tags": TagsSchemaComputed(),
 		},
 	}
 }
@@ -230,7 +230,7 @@ func dataSourceAwsElastiCacheClusterRead(d *schema.ResourceData, meta interface{
 	if len(tagResp.TagList) > 0 {
 		et = tagResp.TagList
 	}
-	d.Set("tags", tagsToMapEC(et))
+	d.Set("tags", TagsToMapEC(et))
 
 	return nil
 

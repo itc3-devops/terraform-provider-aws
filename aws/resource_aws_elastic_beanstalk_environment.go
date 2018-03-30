@@ -193,7 +193,7 @@ func resourceAwsElasticBeanstalkEnvironment() *schema.Resource {
 				Elem:     &schema.Schema{Type: schema.TypeString},
 			},
 
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
@@ -214,12 +214,12 @@ func resourceAwsElasticBeanstalkEnvironmentCreate(d *schema.ResourceData, meta i
 
 	// TODO set tags
 	// Note: at time of writing, you cannot view or edit Tags after creation
-	// d.Set("tags", tagsToMap(instance.Tags))
+	// d.Set("tags", TagsToMap(instance.Tags))
 	createOpts := elasticbeanstalk.CreateEnvironmentInput{
 		EnvironmentName: aws.String(name),
 		ApplicationName: aws.String(app),
 		OptionSettings:  extractOptionSettings(settings),
-		Tags:            tagsFromMapBeanstalk(d.Get("tags").(map[string]interface{})),
+		Tags:            TagsFromMapBeanstalk(d.Get("tags").(map[string]interface{})),
 	}
 
 	if desc != "" {
@@ -458,10 +458,10 @@ func resourceAwsElasticBeanstalkEnvironmentUpdate(d *schema.ResourceData, meta i
 
 	if d.HasChange("tags") {
 		o, n := d.GetChange("tags")
-		oldTags := tagsFromMapBeanstalk(o.(map[string]interface{}))
-		newTags := tagsFromMapBeanstalk(n.(map[string]interface{}))
+		oldTags := TagsFromMapBeanstalk(o.(map[string]interface{}))
+		newTags := TagsFromMapBeanstalk(n.(map[string]interface{}))
 
-		tagsToAdd, tagNamesToRemove := diffTagsBeanstalk(oldTags, newTags)
+		tagsToAdd, tagNamesToRemove := DiffTagsBeanstalk(oldTags, newTags)
 
 		updateTags := elasticbeanstalk.UpdateTagsForResourceInput{
 			ResourceArn:  aws.String(d.Get("arn").(string)),
@@ -635,7 +635,7 @@ func resourceAwsElasticBeanstalkEnvironmentRead(d *schema.ResourceData, meta int
 		return err
 	}
 
-	if err := d.Set("tags", tagsToMapBeanstalk(tags.ResourceTags)); err != nil {
+	if err := d.Set("tags", TagsToMapBeanstalk(tags.ResourceTags)); err != nil {
 		return err
 	}
 

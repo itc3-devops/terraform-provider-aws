@@ -50,9 +50,9 @@ func TestDaxTagsDiff(t *testing.T) {
 	}
 
 	for i, tc := range cases {
-		c, r := diffTagsDax(tagsFromMapDax(tc.Old), tagsFromMapDax(tc.New))
-		cm := tagsToMapDax(c)
-		rm := tagsToMapDax(r)
+		c, r := DiffTagsDax(TagsFromMapDax(tc.Old), TagsFromMapDax(tc.New))
+		cm := TagsToMapDax(c)
+		rm := TagsToMapDax(r)
 		if !reflect.DeepEqual(cm, tc.Create) {
 			t.Fatalf("%d: bad create: %#v", i, cm)
 		}
@@ -73,7 +73,7 @@ func TestTagsDaxIgnore(t *testing.T) {
 		Value: aws.String("baz"),
 	})
 	for _, tag := range ignoredTags {
-		if !tagIgnoredDax(tag) {
+		if !TagIgnoredDax(tag) {
 			t.Fatalf("Tag %v with value %v not ignored, but should be!", *tag.Key, *tag.Value)
 		}
 	}
@@ -83,7 +83,7 @@ func TestTagsDaxIgnore(t *testing.T) {
 func testAccCheckDaxTags(
 	ts []*dax.Tag, key string, value string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		m := tagsToMapDax(ts)
+		m := TagsToMapDax(ts)
 		v, ok := m[key]
 		if value != "" && !ok {
 			return fmt.Errorf("Missing tag: %s", key)

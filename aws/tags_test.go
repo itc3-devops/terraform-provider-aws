@@ -50,9 +50,9 @@ func TestDiffTags(t *testing.T) {
 	}
 
 	for i, tc := range cases {
-		c, r := diffTags(tagsFromMap(tc.Old), tagsFromMap(tc.New))
-		cm := tagsToMap(c)
-		rm := tagsToMap(r)
+		c, r := DiffTags(TagsFromMap(tc.Old), TagsFromMap(tc.New))
+		cm := TagsToMap(c)
+		rm := TagsToMap(r)
 		if !reflect.DeepEqual(cm, tc.Create) {
 			t.Fatalf("%d: bad create: %#v", i, cm)
 		}
@@ -74,7 +74,7 @@ func TestIgnoringTags(t *testing.T) {
 		Value: aws.String("baz"),
 	})
 	for _, tag := range ignoredTags {
-		if !tagIgnored(tag) {
+		if !TagIgnored(tag) {
 			t.Fatalf("Tag %v with value %v not ignored, but should be!", *tag.Key, *tag.Value)
 		}
 	}
@@ -84,7 +84,7 @@ func TestIgnoringTags(t *testing.T) {
 func testAccCheckTags(
 	ts *[]*ec2.Tag, key string, value string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		m := tagsToMap(*ts)
+		m := TagsToMap(*ts)
 		v, ok := m[key]
 		if value != "" && !ok {
 			return fmt.Errorf("Missing tag: %s", key)

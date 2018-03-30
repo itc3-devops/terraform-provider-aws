@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-// setTags is a helper to set the tags for a resource. It expects the
+// SetTags is a helper to set the tags for a resource. It expects the
 // tags field to be named "tags"
-func setTagsDax(conn *dax.DAX, d *schema.ResourceData, arn string) error {
+func SetTagsDax(conn *dax.DAX, d *schema.ResourceData, arn string) error {
 	if d.HasChange("tags") {
 		oraw, nraw := d.GetChange("tags")
 		o := oraw.(map[string]interface{})
 		n := nraw.(map[string]interface{})
-		create, remove := diffTagsDax(tagsFromMapDax(o), tagsFromMapDax(n))
+		create, remove := DiffTagsDax(TagsFromMapDax(o), TagsFromMapDax(n))
 
 		// Set tags
 		if len(remove) > 0 {
@@ -49,10 +49,10 @@ func setTagsDax(conn *dax.DAX, d *schema.ResourceData, arn string) error {
 	return nil
 }
 
-// diffTags takes our tags locally and the ones remotely and returns
+// DiffTags takes our tags locally and the ones remotely and returns
 // the set of tags that must be created, and the set of tags that must
 // be destroyed.
-func diffTagsDax(oldTags, newTags []*dax.Tag) ([]*dax.Tag, []*dax.Tag) {
+func DiffTagsDax(oldTags, newTags []*dax.Tag) ([]*dax.Tag, []*dax.Tag) {
 	// First, we're creating everything we have
 	create := make(map[string]interface{})
 	for _, t := range newTags {
@@ -69,18 +69,18 @@ func diffTagsDax(oldTags, newTags []*dax.Tag) ([]*dax.Tag, []*dax.Tag) {
 		}
 	}
 
-	return tagsFromMapDax(create), remove
+	return TagsFromMapDax(create), remove
 }
 
-// tagsFromMap returns the tags for the given map of data.
-func tagsFromMapDax(m map[string]interface{}) []*dax.Tag {
+// TagsFromMap returns the tags for the given map of data.
+func TagsFromMapDax(m map[string]interface{}) []*dax.Tag {
 	result := make([]*dax.Tag, 0, len(m))
 	for k, v := range m {
 		t := &dax.Tag{
 			Key:   aws.String(k),
 			Value: aws.String(v.(string)),
 		}
-		if !tagIgnoredDax(t) {
+		if !TagIgnoredDax(t) {
 			result = append(result, t)
 		}
 	}
@@ -88,11 +88,11 @@ func tagsFromMapDax(m map[string]interface{}) []*dax.Tag {
 	return result
 }
 
-// tagsToMap turns the list of tags into a map.
-func tagsToMapDax(ts []*dax.Tag) map[string]string {
+// TagsToMap turns the list of tags into a map.
+func TagsToMapDax(ts []*dax.Tag) map[string]string {
 	result := make(map[string]string)
 	for _, t := range ts {
-		if !tagIgnoredDax(t) {
+		if !TagIgnoredDax(t) {
 			result[*t.Key] = *t.Value
 		}
 	}
@@ -102,7 +102,7 @@ func tagsToMapDax(ts []*dax.Tag) map[string]string {
 
 // compare a tag against a list of strings and checks if it should
 // be ignored or not
-func tagIgnoredDax(t *dax.Tag) bool {
+func TagIgnoredDax(t *dax.Tag) bool {
 	filter := []string{"^aws:"}
 	for _, v := range filter {
 		log.Printf("[DEBUG] Matching %v with %v\n", v, *t.Key)

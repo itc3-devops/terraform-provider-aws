@@ -85,7 +85,7 @@ func resourceAwsDefaultRouteTable() *schema.Resource {
 				Set: resourceAwsRouteTableHash,
 			},
 
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }

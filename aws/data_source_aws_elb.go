@@ -180,7 +180,7 @@ func dataSourceAwsElb() *schema.Resource {
 				Set:      schema.HashString,
 			},
 
-			"tags": tagsSchemaComputed(),
+			"tags": TagsSchemaComputed(),
 
 			"zone_id": {
 				Type:     schema.TypeString,

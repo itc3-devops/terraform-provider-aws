@@ -84,7 +84,7 @@ func resourceAwsGlacierVault() *schema.Resource {
 				},
 			},
 
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }

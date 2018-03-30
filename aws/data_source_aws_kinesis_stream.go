@@ -89,7 +89,7 @@ func dataSourceAwsKinesisStreamRead(d *schema.ResourceData, meta interface{}) er
 	if err != nil {
 		return err
 	}
-	d.Set("tags", tagsToMapKinesis(tags.Tags))
+	d.Set("tags", TagsToMapKinesis(tags.Tags))
 
 	return nil
 }

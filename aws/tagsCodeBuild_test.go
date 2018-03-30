@@ -50,9 +50,9 @@ func TestDiffTagsCodeBuild(t *testing.T) {
 	}
 
 	for i, tc := range cases {
-		c, r := diffTagsCodeBuild(tagsFromMapCodeBuild(tc.Old), tagsFromMapCodeBuild(tc.New))
-		cm := tagsToMapCodeBuild(c)
-		rm := tagsToMapCodeBuild(r)
+		c, r := DiffTagsCodeBuild(TagsFromMapCodeBuild(tc.Old), TagsFromMapCodeBuild(tc.New))
+		cm := TagsToMapCodeBuild(c)
+		rm := TagsToMapCodeBuild(r)
 		if !reflect.DeepEqual(cm, tc.Create) {
 			t.Fatalf("%d: bad create: %#v", i, cm)
 		}
@@ -73,7 +73,7 @@ func TestIgnoringTagsCodeBuild(t *testing.T) {
 		Value: aws.String("baz"),
 	})
 	for _, tag := range ignoredTags {
-		if !tagIgnoredCodeBuild(tag) {
+		if !TagIgnoredCodeBuild(tag) {
 			t.Fatalf("Tag %v with value %v not ignored, but should be!", *tag.Key, *tag.Value)
 		}
 	}
@@ -83,7 +83,7 @@ func TestIgnoringTagsCodeBuild(t *testing.T) {
 func testAccCheckTagsCodeBuild(
 	ts *[]*codebuild.Tag, key string, value string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		m := tagsToMapCodeBuild(*ts)
+		m := TagsToMapCodeBuild(*ts)
 		v, ok := m[key]
 		if value != "" && !ok {
 			return fmt.Errorf("Missing tag: %s", key)

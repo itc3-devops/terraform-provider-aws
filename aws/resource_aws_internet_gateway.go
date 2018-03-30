@@ -28,7 +28,7 @@ func resourceAwsInternetGateway() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
@@ -65,7 +65,7 @@ func resourceAwsInternetGatewayCreate(d *schema.ResourceData, meta interface{}) 
 		return errwrap.Wrapf("{{err}}", err)
 	}
 
-	err = setTags(conn, d)
+	err = SetTags(conn, d)
 	if err != nil {
 		return err
 	}
@@ -95,7 +95,7 @@ func resourceAwsInternetGatewayRead(d *schema.ResourceData, meta interface{}) er
 		d.Set("vpc_id", ig.Attachments[0].VpcId)
 	}
 
-	d.Set("tags", tagsToMap(ig.Tags))
+	d.Set("tags", TagsToMap(ig.Tags))
 
 	return nil
 }
@@ -115,7 +115,7 @@ func resourceAwsInternetGatewayUpdate(d *schema.ResourceData, meta interface{}) 
 
 	conn := meta.(*AWSClient).ec2conn
 
-	if err := setTags(conn, d); err != nil {
+	if err := SetTags(conn, d); err != nil {
 		return err
 	}
 

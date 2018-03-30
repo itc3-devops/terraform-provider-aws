@@ -136,7 +136,7 @@ func dataSourceAwsRdsCluster() *schema.Resource {
 				Computed: true,
 			},
 
-			"tags": tagsSchemaComputed(),
+			"tags": TagsSchemaComputed(),
 
 			"vpc_security_group_ids": {
 				Type:     schema.TypeSet,

@@ -8,10 +8,10 @@ import (
 	"github.com/aws/aws-sdk-go/service/elasticbeanstalk"
 )
 
-// diffTags takes our tags locally and the ones remotely and returns
+// DiffTags takes our tags locally and the ones remotely and returns
 // the set of tags that must be created, and the set of tags that must
 // be destroyed.
-func diffTagsBeanstalk(oldTags, newTags []*elasticbeanstalk.Tag) ([]*elasticbeanstalk.Tag, []*string) {
+func DiffTagsBeanstalk(oldTags, newTags []*elasticbeanstalk.Tag) ([]*elasticbeanstalk.Tag, []*string) {
 	// First, we're creating everything we have
 	create := make(map[string]interface{})
 	for _, t := range newTags {
@@ -27,18 +27,18 @@ func diffTagsBeanstalk(oldTags, newTags []*elasticbeanstalk.Tag) ([]*elasticbean
 		}
 	}
 
-	return tagsFromMapBeanstalk(create), remove
+	return TagsFromMapBeanstalk(create), remove
 }
 
-// tagsFromMap returns the tags for the given map of data.
-func tagsFromMapBeanstalk(m map[string]interface{}) []*elasticbeanstalk.Tag {
+// TagsFromMap returns the tags for the given map of data.
+func TagsFromMapBeanstalk(m map[string]interface{}) []*elasticbeanstalk.Tag {
 	var result []*elasticbeanstalk.Tag
 	for k, v := range m {
 		t := &elasticbeanstalk.Tag{
 			Key:   aws.String(k),
 			Value: aws.String(v.(string)),
 		}
-		if !tagIgnoredBeanstalk(t) {
+		if !TagIgnoredBeanstalk(t) {
 			result = append(result, t)
 		}
 	}
@@ -46,11 +46,11 @@ func tagsFromMapBeanstalk(m map[string]interface{}) []*elasticbeanstalk.Tag {
 	return result
 }
 
-// tagsToMap turns the list of tags into a map.
-func tagsToMapBeanstalk(ts []*elasticbeanstalk.Tag) map[string]string {
+// TagsToMap turns the list of tags into a map.
+func TagsToMapBeanstalk(ts []*elasticbeanstalk.Tag) map[string]string {
 	result := make(map[string]string)
 	for _, t := range ts {
-		if !tagIgnoredBeanstalk(t) {
+		if !TagIgnoredBeanstalk(t) {
 			result[*t.Key] = *t.Value
 		}
 	}
@@ -60,7 +60,7 @@ func tagsToMapBeanstalk(ts []*elasticbeanstalk.Tag) map[string]string {
 
 // compare a tag against a list of strings and checks if it should
 // be ignored or not
-func tagIgnoredBeanstalk(t *elasticbeanstalk.Tag) bool {
+func TagIgnoredBeanstalk(t *elasticbeanstalk.Tag) bool {
 	filter := []string{"^aws:", "^elasticbeanstalk:", "Name"}
 	for _, v := range filter {
 		log.Printf("[DEBUG] Matching %v with %v\n", v, *t.Key)

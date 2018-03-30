@@ -105,7 +105,7 @@ func resourceAwsVpc() *schema.Resource {
 				Computed: true,
 			},
 
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
@@ -180,7 +180,7 @@ func resourceAwsVpcRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("instance_tenancy", vpc.InstanceTenancy)
 
 	// Tags
-	d.Set("tags", tagsToMap(vpc.Tags))
+	d.Set("tags", TagsToMap(vpc.Tags))
 
 	for _, a := range vpc.Ipv6CidrBlockAssociationSet {
 		if *a.Ipv6CidrBlockState.State == "associated" { //we can only ever have 1 IPv6 block associated at once
@@ -452,7 +452,7 @@ func resourceAwsVpcUpdate(d *schema.ResourceData, meta interface{}) error {
 		d.SetPartial("assign_generated_ipv6_cidr_block")
 	}
 
-	if err := setTags(conn, d); err != nil {
+	if err := SetTags(conn, d); err != nil {
 		return err
 	} else {
 		d.SetPartial("tags")

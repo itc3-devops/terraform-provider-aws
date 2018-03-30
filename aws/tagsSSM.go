@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-// setTags is a helper to set the tags for a resource. It expects the
+// SetTags is a helper to set the tags for a resource. It expects the
 // tags field to be named "tags"
-func setTagsSSM(conn *ssm.SSM, d *schema.ResourceData, id, resourceType string) error {
+func SetTagsSSM(conn *ssm.SSM, d *schema.ResourceData, id, resourceType string) error {
 	if d.HasChange("tags") {
 		oraw, nraw := d.GetChange("tags")
 		o := oraw.(map[string]interface{})
 		n := nraw.(map[string]interface{})
-		create, remove := diffTagsSSM(tagsFromMapSSM(o), tagsFromMapSSM(n))
+		create, remove := DiffTagsSSM(TagsFromMapSSM(o), TagsFromMapSSM(n))
 
 		// Set tags
 		if len(remove) > 0 {
@@ -51,10 +51,10 @@ func setTagsSSM(conn *ssm.SSM, d *schema.ResourceData, id, resourceType string) 
 	return nil
 }
 
-// diffTags takes our tags locally and the ones remotely and returns
+// DiffTags takes our tags locally and the ones remotely and returns
 // the set of tags that must be created, and the set of tags that must
 // be destroyed.
-func diffTagsSSM(oldTags, newTags []*ssm.Tag) ([]*ssm.Tag, []*ssm.Tag) {
+func DiffTagsSSM(oldTags, newTags []*ssm.Tag) ([]*ssm.Tag, []*ssm.Tag) {
 	// First, we're creating everything we have
 	create := make(map[string]interface{})
 	for _, t := range newTags {
@@ -71,18 +71,18 @@ func diffTagsSSM(oldTags, newTags []*ssm.Tag) ([]*ssm.Tag, []*ssm.Tag) {
 		}
 	}
 
-	return tagsFromMapSSM(create), remove
+	return TagsFromMapSSM(create), remove
 }
 
-// tagsFromMap returns the tags for the given map of data.
-func tagsFromMapSSM(m map[string]interface{}) []*ssm.Tag {
+// TagsFromMap returns the tags for the given map of data.
+func TagsFromMapSSM(m map[string]interface{}) []*ssm.Tag {
 	result := make([]*ssm.Tag, 0, len(m))
 	for k, v := range m {
 		t := &ssm.Tag{
 			Key:   aws.String(k),
 			Value: aws.String(v.(string)),
 		}
-		if !tagIgnoredSSM(t) {
+		if !TagIgnoredSSM(t) {
 			result = append(result, t)
 		}
 	}
@@ -90,11 +90,11 @@ func tagsFromMapSSM(m map[string]interface{}) []*ssm.Tag {
 	return result
 }
 
-// tagsToMap turns the list of tags into a map.
-func tagsToMapSSM(ts []*ssm.Tag) map[string]string {
+// TagsToMap turns the list of tags into a map.
+func TagsToMapSSM(ts []*ssm.Tag) map[string]string {
 	result := make(map[string]string)
 	for _, t := range ts {
-		if !tagIgnoredSSM(t) {
+		if !TagIgnoredSSM(t) {
 			result[*t.Key] = *t.Value
 		}
 	}
@@ -104,7 +104,7 @@ func tagsToMapSSM(ts []*ssm.Tag) map[string]string {
 
 // compare a tag against a list of strings and checks if it should
 // be ignored or not
-func tagIgnoredSSM(t *ssm.Tag) bool {
+func TagIgnoredSSM(t *ssm.Tag) bool {
 	filter := []string{"^aws:"}
 	for _, v := range filter {
 		log.Printf("[DEBUG] Matching %v with %v\n", v, *t.Key)

@@ -50,9 +50,9 @@ func TestDiffTagsKinesis(t *testing.T) {
 	}
 
 	for i, tc := range cases {
-		c, r := diffTagsKinesis(tagsFromMapKinesis(tc.Old), tagsFromMapKinesis(tc.New))
-		cm := tagsToMapKinesis(c)
-		rm := tagsToMapKinesis(r)
+		c, r := DiffTagsKinesis(TagsFromMapKinesis(tc.Old), TagsFromMapKinesis(tc.New))
+		cm := TagsToMapKinesis(c)
+		rm := TagsToMapKinesis(r)
 		if !reflect.DeepEqual(cm, tc.Create) {
 			t.Fatalf("%d: bad create: %#v", i, cm)
 		}
@@ -73,7 +73,7 @@ func TestIgnoringTagsKinesis(t *testing.T) {
 		Value: aws.String("baz"),
 	})
 	for _, tag := range ignoredTags {
-		if !tagIgnoredKinesis(tag) {
+		if !TagIgnoredKinesis(tag) {
 			t.Fatalf("Tag %v with value %v not ignored, but should be!", *tag.Key, *tag.Value)
 		}
 	}
@@ -82,7 +82,7 @@ func TestIgnoringTagsKinesis(t *testing.T) {
 // testAccCheckTags can be used to check the tags on a resource.
 func testAccCheckKinesisTags(ts []*kinesis.Tag, key string, value string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		m := tagsToMapKinesis(ts)
+		m := TagsToMapKinesis(ts)
 		v, ok := m[key]
 		if value != "" && !ok {
 			return fmt.Errorf("Missing tag: %s", key)

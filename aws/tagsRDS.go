@@ -10,14 +10,14 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-// setTags is a helper to set the tags for a resource. It expects the
+// SetTags is a helper to set the tags for a resource. It expects the
 // tags field to be named "tags"
-func setTagsRDS(conn *rds.RDS, d *schema.ResourceData, arn string) error {
+func SetTagsRDS(conn *rds.RDS, d *schema.ResourceData, arn string) error {
 	if d.HasChange("tags") {
 		oraw, nraw := d.GetChange("tags")
 		o := oraw.(map[string]interface{})
 		n := nraw.(map[string]interface{})
-		create, remove := diffTagsRDS(tagsFromMapRDS(o), tagsFromMapRDS(n))
+		create, remove := DiffTagsRDS(TagsFromMapRDS(o), TagsFromMapRDS(n))
 
 		// Set tags
 		if len(remove) > 0 {
@@ -50,10 +50,10 @@ func setTagsRDS(conn *rds.RDS, d *schema.ResourceData, arn string) error {
 	return nil
 }
 
-// diffTags takes our tags locally and the ones remotely and returns
+// DiffTags takes our tags locally and the ones remotely and returns
 // the set of tags that must be created, and the set of tags that must
 // be destroyed.
-func diffTagsRDS(oldTags, newTags []*rds.Tag) ([]*rds.Tag, []*rds.Tag) {
+func DiffTagsRDS(oldTags, newTags []*rds.Tag) ([]*rds.Tag, []*rds.Tag) {
 	// First, we're creating everything we have
 	create := make(map[string]interface{})
 	for _, t := range newTags {
@@ -70,18 +70,18 @@ func diffTagsRDS(oldTags, newTags []*rds.Tag) ([]*rds.Tag, []*rds.Tag) {
 		}
 	}
 
-	return tagsFromMapRDS(create), remove
+	return TagsFromMapRDS(create), remove
 }
 
-// tagsFromMap returns the tags for the given map of data.
-func tagsFromMapRDS(m map[string]interface{}) []*rds.Tag {
+// TagsFromMap returns the tags for the given map of data.
+func TagsFromMapRDS(m map[string]interface{}) []*rds.Tag {
 	result := make([]*rds.Tag, 0, len(m))
 	for k, v := range m {
 		t := &rds.Tag{
 			Key:   aws.String(k),
 			Value: aws.String(v.(string)),
 		}
-		if !tagIgnoredRDS(t) {
+		if !TagIgnoredRDS(t) {
 			result = append(result, t)
 		}
 	}
@@ -89,11 +89,11 @@ func tagsFromMapRDS(m map[string]interface{}) []*rds.Tag {
 	return result
 }
 
-// tagsToMap turns the list of tags into a map.
-func tagsToMapRDS(ts []*rds.Tag) map[string]string {
+// TagsToMap turns the list of tags into a map.
+func TagsToMapRDS(ts []*rds.Tag) map[string]string {
 	result := make(map[string]string)
 	for _, t := range ts {
-		if !tagIgnoredRDS(t) {
+		if !TagIgnoredRDS(t) {
 			result[*t.Key] = *t.Value
 		}
 	}
@@ -115,12 +115,12 @@ func saveTagsRDS(conn *rds.RDS, d *schema.ResourceData, arn string) error {
 		dt = resp.TagList
 	}
 
-	return d.Set("tags", tagsToMapRDS(dt))
+	return d.Set("tags", TagsToMapRDS(dt))
 }
 
 // compare a tag against a list of strings and checks if it should
 // be ignored or not
-func tagIgnoredRDS(t *rds.Tag) bool {
+func TagIgnoredRDS(t *rds.Tag) bool {
 	filter := []string{"^aws:"}
 	for _, v := range filter {
 		log.Printf("[DEBUG] Matching %v with %v\n", v, *t.Key)

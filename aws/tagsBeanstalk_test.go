@@ -49,8 +49,8 @@ func TestDiffBeanstalkTags(t *testing.T) {
 	}
 
 	for i, tc := range cases {
-		c, r := diffTagsBeanstalk(tagsFromMapBeanstalk(tc.Old), tagsFromMapBeanstalk(tc.New))
-		cm := tagsToMapBeanstalk(c)
+		c, r := DiffTagsBeanstalk(TagsFromMapBeanstalk(tc.Old), TagsFromMapBeanstalk(tc.New))
+		cm := TagsToMapBeanstalk(c)
 		rl := []string{}
 		for _, tagName := range r {
 			rl = append(rl, *tagName)
@@ -75,7 +75,7 @@ func TestIgnoringTagsBeanstalk(t *testing.T) {
 		Value: aws.String("baz"),
 	})
 	for _, tag := range ignoredTags {
-		if !tagIgnoredBeanstalk(tag) {
+		if !TagIgnoredBeanstalk(tag) {
 			t.Fatalf("Tag %v with value %v not ignored, but should be!", *tag.Key, *tag.Value)
 		}
 	}
@@ -85,7 +85,7 @@ func TestIgnoringTagsBeanstalk(t *testing.T) {
 func testAccCheckBeanstalkTags(
 	ts *[]*elasticbeanstalk.Tag, key string, value string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		m := tagsToMapBeanstalk(*ts)
+		m := TagsToMapBeanstalk(*ts)
 		v, ok := m[key]
 		if value != "" && !ok {
 			return fmt.Errorf("Missing tag: %s", key)

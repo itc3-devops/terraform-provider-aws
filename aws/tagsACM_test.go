@@ -47,9 +47,9 @@ func TestDiffTagsACM(t *testing.T) {
 	}
 
 	for i, tc := range cases {
-		c, r := diffTagsACM(tagsFromMapACM(tc.Old), tagsFromMapACM(tc.New))
-		cm := tagsToMapACM(c)
-		rm := tagsToMapACM(r)
+		c, r := DiffTagsACM(TagsFromMapACM(tc.Old), TagsFromMapACM(tc.New))
+		cm := TagsToMapACM(c)
+		rm := TagsToMapACM(r)
 		if !reflect.DeepEqual(cm, tc.Create) {
 			t.Fatalf("%d: bad create: %#v", i, cm)
 		}
@@ -70,7 +70,7 @@ func TestIgnoringTagsACM(t *testing.T) {
 		Value: aws.String("baz"),
 	})
 	for _, tag := range ignoredTags {
-		if !tagIgnoredACM(tag) {
+		if !TagIgnoredACM(tag) {
 			t.Fatalf("Tag %v with value %v not ignored, but should be!", *tag.Key, *tag.Value)
 		}
 	}

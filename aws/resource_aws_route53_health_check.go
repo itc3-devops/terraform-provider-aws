@@ -122,7 +122,7 @@ func resourceAwsRoute53HealthCheck() *schema.Resource {
 				Set:      schema.HashString,
 			},
 
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
@@ -192,7 +192,7 @@ func resourceAwsRoute53HealthCheckUpdate(d *schema.ResourceData, meta interface{
 		return err
 	}
 
-	if err := setTagsR53(conn, d, "healthcheck"); err != nil {
+	if err := SetTagsR53(conn, d, "healthcheck"); err != nil {
 		return err
 	}
 
@@ -298,7 +298,7 @@ func resourceAwsRoute53HealthCheckCreate(d *schema.ResourceData, meta interface{
 
 	d.SetId(*resp.HealthCheck.Id)
 
-	if err := setTagsR53(conn, d, "healthcheck"); err != nil {
+	if err := SetTagsR53(conn, d, "healthcheck"); err != nil {
 		return err
 	}
 
@@ -361,7 +361,7 @@ func resourceAwsRoute53HealthCheckRead(d *schema.ResourceData, meta interface{})
 		tags = resp.ResourceTagSet.Tags
 	}
 
-	if err := d.Set("tags", tagsToMapR53(tags)); err != nil {
+	if err := d.Set("tags", TagsToMapR53(tags)); err != nil {
 		return err
 	}
 

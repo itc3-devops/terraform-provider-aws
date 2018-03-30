@@ -141,7 +141,7 @@ func resourceAwsS3BucketObject() *schema.Resource {
 				Computed: true,
 			},
 
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 
 			"website_redirect": {
 				Type:     schema.TypeString,
@@ -327,7 +327,7 @@ func resourceAwsS3BucketObjectRead(d *schema.ResourceData, meta interface{}) err
 		if err != nil {
 			return fmt.Errorf("Failed to get object tags (bucket: %s, key: %s): %s", bucket, key, err)
 		}
-		d.Set("tags", tagsToMapS3(tagResp.TagSet))
+		d.Set("tags", TagsToMapS3(tagResp.TagSet))
 	}
 
 	return nil

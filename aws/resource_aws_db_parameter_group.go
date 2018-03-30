@@ -81,14 +81,14 @@ func resourceAwsDbParameterGroup() *schema.Resource {
 				Set: resourceAwsDbParameterHash,
 			},
 
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
 
 func resourceAwsDbParameterGroupCreate(d *schema.ResourceData, meta interface{}) error {
 	rdsconn := meta.(*AWSClient).rdsconn
-	tags := tagsFromMapRDS(d.Get("tags").(map[string]interface{}))
+	tags := TagsFromMapRDS(d.Get("tags").(map[string]interface{}))
 
 	var groupName string
 	if v, ok := d.GetOk("name"); ok {
@@ -248,7 +248,7 @@ func resourceAwsDbParameterGroupRead(d *schema.ResourceData, meta interface{}) e
 		if len(resp.TagList) > 0 {
 			dt = resp.TagList
 		}
-		d.Set("tags", tagsToMapRDS(dt))
+		d.Set("tags", TagsToMapRDS(dt))
 	}
 
 	return nil
@@ -304,7 +304,7 @@ func resourceAwsDbParameterGroupUpdate(d *schema.ResourceData, meta interface{})
 	}
 
 	if arn, err := buildRDSPGARN(d.Id(), meta.(*AWSClient).partition, meta.(*AWSClient).accountid, meta.(*AWSClient).region); err == nil {
-		if err := setTagsRDS(rdsconn, d, arn); err != nil {
+		if err := SetTagsRDS(rdsconn, d, arn); err != nil {
 			return err
 		} else {
 			d.SetPartial("tags")

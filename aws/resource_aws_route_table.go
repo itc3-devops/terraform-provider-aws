@@ -31,7 +31,7 @@ func resourceAwsRouteTable() *schema.Resource {
 				ForceNew: true,
 			},
 
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 
 			"propagating_vgws": {
 				Type:     schema.TypeSet,
@@ -205,7 +205,7 @@ func resourceAwsRouteTableRead(d *schema.ResourceData, meta interface{}) error {
 	d.Set("route", route)
 
 	// Tags
-	d.Set("tags", tagsToMap(rt.Tags))
+	d.Set("tags", TagsToMap(rt.Tags))
 
 	return nil
 }
@@ -376,7 +376,7 @@ func resourceAwsRouteTableUpdate(d *schema.ResourceData, meta interface{}) error
 		}
 	}
 
-	if err := setTags(conn, d); err != nil {
+	if err := SetTags(conn, d); err != nil {
 		return err
 	} else {
 		d.SetPartial("tags")

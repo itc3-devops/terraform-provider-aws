@@ -88,7 +88,7 @@ func resourceAwsDefaultSecurityGroupCreate(d *schema.ResourceData, meta interfac
 
 	log.Printf("[INFO] Default Security Group ID: %s", d.Id())
 
-	if err := setTags(conn, d); err != nil {
+	if err := SetTags(conn, d); err != nil {
 		return err
 	}
 

@@ -156,7 +156,7 @@ func resourceAwsNetworkAcl() *schema.Resource {
 				},
 				Set: resourceAwsNetworkAclEntryHash,
 			},
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
@@ -227,7 +227,7 @@ func resourceAwsNetworkAclRead(d *schema.ResourceData, meta interface{}) error {
 	}
 
 	d.Set("vpc_id", networkAcl.VpcId)
-	d.Set("tags", tagsToMap(networkAcl.Tags))
+	d.Set("tags", TagsToMap(networkAcl.Tags))
 
 	var s []string
 	for _, a := range networkAcl.Associations {
@@ -339,7 +339,7 @@ func resourceAwsNetworkAclUpdate(d *schema.ResourceData, meta interface{}) error
 
 	}
 
-	if err := setTags(conn, d); err != nil {
+	if err := SetTags(conn, d); err != nil {
 		return err
 	} else {
 		d.SetPartial("tags")

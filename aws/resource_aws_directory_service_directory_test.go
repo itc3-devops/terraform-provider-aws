@@ -53,9 +53,9 @@ func TestDiffTagsDirectoryService(t *testing.T) {
 	}
 
 	for i, tc := range cases {
-		c, r := diffTagsDS(tagsFromMapDS(tc.Old), tagsFromMapDS(tc.New))
-		cm := tagsToMapDS(c)
-		rm := tagsToMapDS(r)
+		c, r := DiffTagsDS(TagsFromMapDS(tc.Old), TagsFromMapDS(tc.New))
+		cm := TagsToMapDS(c)
+		rm := TagsToMapDS(r)
 		if !reflect.DeepEqual(cm, tc.Create) {
 			t.Fatalf("%d: bad create: %#v", i, cm)
 		}

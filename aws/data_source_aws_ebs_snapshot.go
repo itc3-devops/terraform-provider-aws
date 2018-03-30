@@ -80,7 +80,7 @@ func dataSourceAwsEbsSnapshot() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"tags": tagsSchemaComputed(),
+			"tags": TagsSchemaComputed(),
 		},
 	}
 }
@@ -155,7 +155,7 @@ func snapshotDescriptionAttributes(d *schema.ResourceData, snapshot *ec2.Snapsho
 	d.Set("owner_id", snapshot.OwnerId)
 	d.Set("owner_alias", snapshot.OwnerAlias)
 
-	if err := d.Set("tags", tagsToMap(snapshot.Tags)); err != nil {
+	if err := d.Set("tags", TagsToMap(snapshot.Tags)); err != nil {
 		return err
 	}
 

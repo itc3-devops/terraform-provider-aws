@@ -125,7 +125,7 @@ func resourceAwsSqsQueue() *schema.Resource {
 				Computed: true,
 				Optional: true,
 			},
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
@@ -213,7 +213,7 @@ func resourceAwsSqsQueueCreate(d *schema.ResourceData, meta interface{}) error {
 func resourceAwsSqsQueueUpdate(d *schema.ResourceData, meta interface{}) error {
 	sqsconn := meta.(*AWSClient).sqsconn
 
-	if err := setTagsSQS(sqsconn, d); err != nil {
+	if err := SetTagsSQS(sqsconn, d); err != nil {
 		return err
 	}
 
@@ -324,7 +324,7 @@ func resourceAwsSqsQueueRead(d *schema.ResourceData, meta interface{}) error {
 			return err
 		}
 	} else {
-		tags = tagsToMapGeneric(listTagsOutput.Tags)
+		tags = TagsToMapGeneric(listTagsOutput.Tags)
 	}
 	d.Set("tags", tags)
 
@@ -359,10 +359,10 @@ func extractNameFromSqsQueueUrl(queue string) (string, error) {
 
 }
 
-func setTagsSQS(conn *sqs.SQS, d *schema.ResourceData) error {
+func SetTagsSQS(conn *sqs.SQS, d *schema.ResourceData) error {
 	if d.HasChange("tags") {
 		oraw, nraw := d.GetChange("tags")
-		create, remove := diffTagsGeneric(oraw.(map[string]interface{}), nraw.(map[string]interface{}))
+		create, remove := DiffTagsGeneric(oraw.(map[string]interface{}), nraw.(map[string]interface{}))
 
 		if len(remove) > 0 {
 			log.Printf("[DEBUG] Removing tags: %#v", remove)

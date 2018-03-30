@@ -15,16 +15,16 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-// tagsSchema returns the schema to use for tags.
+// TagsSchema returns the schema to use for tags.
 //
-func tagsSchema() *schema.Schema {
+func TagsSchema() *schema.Schema {
 	return &schema.Schema{
 		Type:     schema.TypeMap,
 		Optional: true,
 	}
 }
 
-func tagsSchemaComputed() *schema.Schema {
+func TagsSchemaComputed() *schema.Schema {
 	return &schema.Schema{
 		Type:     schema.TypeMap,
 		Optional: true,
@@ -32,12 +32,12 @@ func tagsSchemaComputed() *schema.Schema {
 	}
 }
 
-func setElbV2Tags(conn *elbv2.ELBV2, d *schema.ResourceData) error {
+func SetElbV2Tags(conn *elbv2.ELBV2, d *schema.ResourceData) error {
 	if d.HasChange("tags") {
 		oraw, nraw := d.GetChange("tags")
 		o := oraw.(map[string]interface{})
 		n := nraw.(map[string]interface{})
-		create, remove := diffElbV2Tags(tagsFromMapELBv2(o), tagsFromMapELBv2(n))
+		create, remove := DiffElbV2Tags(TagsFromMapELBv2(o), TagsFromMapELBv2(n))
 
 		// Set tags
 		if len(remove) > 0 {
@@ -69,12 +69,12 @@ func setElbV2Tags(conn *elbv2.ELBV2, d *schema.ResourceData) error {
 	return nil
 }
 
-func setVolumeTags(conn *ec2.EC2, d *schema.ResourceData) error {
+func SetVolumeTags(conn *ec2.EC2, d *schema.ResourceData) error {
 	if d.HasChange("volume_tags") {
 		oraw, nraw := d.GetChange("volume_tags")
 		o := oraw.(map[string]interface{})
 		n := nraw.(map[string]interface{})
-		create, remove := diffTags(tagsFromMap(o), tagsFromMap(n))
+		create, remove := DiffTags(TagsFromMap(o), TagsFromMap(n))
 
 		volumeIds, err := getAwsInstanceVolumeIds(conn, d)
 		if err != nil {
@@ -126,14 +126,14 @@ func setVolumeTags(conn *ec2.EC2, d *schema.ResourceData) error {
 	return nil
 }
 
-// setTags is a helper to set the tags for a resource. It expects the
+// SetTags is a helper to set the tags for a resource. It expects the
 // tags field to be named "tags"
-func setTags(conn *ec2.EC2, d *schema.ResourceData) error {
+func SetTags(conn *ec2.EC2, d *schema.ResourceData) error {
 	if d.HasChange("tags") {
 		oraw, nraw := d.GetChange("tags")
 		o := oraw.(map[string]interface{})
 		n := nraw.(map[string]interface{})
-		create, remove := diffTags(tagsFromMap(o), tagsFromMap(n))
+		create, remove := DiffTags(TagsFromMap(o), TagsFromMap(n))
 
 		// Set tags
 		if len(remove) > 0 {
@@ -181,10 +181,10 @@ func setTags(conn *ec2.EC2, d *schema.ResourceData) error {
 	return nil
 }
 
-// diffTags takes our tags locally and the ones remotely and returns
+// DiffTags takes our tags locally and the ones remotely and returns
 // the set of tags that must be created, and the set of tags that must
 // be destroyed.
-func diffTags(oldTags, newTags []*ec2.Tag) ([]*ec2.Tag, []*ec2.Tag) {
+func DiffTags(oldTags, newTags []*ec2.Tag) ([]*ec2.Tag, []*ec2.Tag) {
 	// First, we're creating everything we have
 	create := make(map[string]interface{})
 	for _, t := range newTags {
@@ -200,18 +200,18 @@ func diffTags(oldTags, newTags []*ec2.Tag) ([]*ec2.Tag, []*ec2.Tag) {
 		}
 	}
 
-	return tagsFromMap(create), remove
+	return TagsFromMap(create), remove
 }
 
-// tagsFromMap returns the tags for the given map of data.
-func tagsFromMap(m map[string]interface{}) []*ec2.Tag {
+// TagsFromMap returns the tags for the given map of data.
+func TagsFromMap(m map[string]interface{}) []*ec2.Tag {
 	result := make([]*ec2.Tag, 0, len(m))
 	for k, v := range m {
 		t := &ec2.Tag{
 			Key:   aws.String(k),
 			Value: aws.String(v.(string)),
 		}
-		if !tagIgnored(t) {
+		if !TagIgnored(t) {
 			result = append(result, t)
 		}
 	}
@@ -219,11 +219,11 @@ func tagsFromMap(m map[string]interface{}) []*ec2.Tag {
 	return result
 }
 
-// tagsToMap turns the list of tags into a map.
-func tagsToMap(ts []*ec2.Tag) map[string]string {
+// TagsToMap turns the list of tags into a map.
+func TagsToMap(ts []*ec2.Tag) map[string]string {
 	result := make(map[string]string)
 	for _, t := range ts {
-		if !tagIgnored(t) {
+		if !TagIgnored(t) {
 			result[*t.Key] = *t.Value
 		}
 	}
@@ -231,7 +231,7 @@ func tagsToMap(ts []*ec2.Tag) map[string]string {
 	return result
 }
 
-func diffElbV2Tags(oldTags, newTags []*elbv2.Tag) ([]*elbv2.Tag, []*elbv2.Tag) {
+func DiffElbV2Tags(oldTags, newTags []*elbv2.Tag) ([]*elbv2.Tag, []*elbv2.Tag) {
 	// First, we're creating everything we have
 	create := make(map[string]interface{})
 	for _, t := range newTags {
@@ -248,14 +248,14 @@ func diffElbV2Tags(oldTags, newTags []*elbv2.Tag) ([]*elbv2.Tag, []*elbv2.Tag) {
 		}
 	}
 
-	return tagsFromMapELBv2(create), remove
+	return TagsFromMapELBv2(create), remove
 }
 
-// tagsToMapELBv2 turns the list of tags into a map.
-func tagsToMapELBv2(ts []*elbv2.Tag) map[string]string {
+// TagsToMapELBv2 turns the list of tags into a map.
+func TagsToMapELBv2(ts []*elbv2.Tag) map[string]string {
 	result := make(map[string]string)
 	for _, t := range ts {
-		if !tagIgnoredELBv2(t) {
+		if !TagIgnoredELBv2(t) {
 			result[*t.Key] = *t.Value
 		}
 	}
@@ -263,15 +263,15 @@ func tagsToMapELBv2(ts []*elbv2.Tag) map[string]string {
 	return result
 }
 
-// tagsFromMapELBv2 returns the tags for the given map of data.
-func tagsFromMapELBv2(m map[string]interface{}) []*elbv2.Tag {
+// TagsFromMapELBv2 returns the tags for the given map of data.
+func TagsFromMapELBv2(m map[string]interface{}) []*elbv2.Tag {
 	var result []*elbv2.Tag
 	for k, v := range m {
 		t := &elbv2.Tag{
 			Key:   aws.String(k),
 			Value: aws.String(v.(string)),
 		}
-		if !tagIgnoredELBv2(t) {
+		if !TagIgnoredELBv2(t) {
 			result = append(result, t)
 		}
 	}
@@ -279,9 +279,9 @@ func tagsFromMapELBv2(m map[string]interface{}) []*elbv2.Tag {
 	return result
 }
 
-// tagIgnored compares a tag against a list of strings and checks if it should
+// TagIgnored compares a tag against a list of strings and checks if it should
 // be ignored or not
-func tagIgnored(t *ec2.Tag) bool {
+func TagIgnored(t *ec2.Tag) bool {
 	filter := []string{"^aws:"}
 	for _, v := range filter {
 		log.Printf("[DEBUG] Matching %v with %v\n", v, *t.Key)
@@ -294,7 +294,7 @@ func tagIgnored(t *ec2.Tag) bool {
 }
 
 // and for ELBv2 as well
-func tagIgnoredELBv2(t *elbv2.Tag) bool {
+func TagIgnoredELBv2(t *elbv2.Tag) bool {
 	filter := []string{"^aws:"}
 	for _, v := range filter {
 		log.Printf("[DEBUG] Matching %v with %v\n", v, *t.Key)
@@ -306,8 +306,8 @@ func tagIgnoredELBv2(t *elbv2.Tag) bool {
 	return false
 }
 
-// tagsToMapDynamoDb turns the list of tags into a map for dynamoDB
-func tagsToMapDynamoDb(ts []*dynamodb.Tag) map[string]string {
+// TagsToMapDynamoDb turns the list of tags into a map for dynamoDB
+func TagsToMapDynamoDb(ts []*dynamodb.Tag) map[string]string {
 	result := make(map[string]string)
 	for _, t := range ts {
 		result[*t.Key] = *t.Value
@@ -315,8 +315,8 @@ func tagsToMapDynamoDb(ts []*dynamodb.Tag) map[string]string {
 	return result
 }
 
-// tagsFromMapDynamoDb returns the tags for a given map
-func tagsFromMapDynamoDb(m map[string]interface{}) []*dynamodb.Tag {
+// TagsFromMapDynamoDb returns the tags for a given map
+func TagsFromMapDynamoDb(m map[string]interface{}) []*dynamodb.Tag {
 	result := make([]*dynamodb.Tag, 0, len(m))
 	for k, v := range m {
 		t := &dynamodb.Tag{
@@ -328,16 +328,16 @@ func tagsFromMapDynamoDb(m map[string]interface{}) []*dynamodb.Tag {
 	return result
 }
 
-// setTagsDynamoDb is a helper to set the tags for a dynamoDB resource
+// SetTagsDynamoDb is a helper to set the tags for a dynamoDB resource
 // This is needed because dynamodb requires a completely different set and delete
 // method from the ec2 tag resource handling. Also the `UntagResource` method
 // for dynamoDB only requires a list of tag keys, instead of the full map of keys.
-func setTagsDynamoDb(conn *dynamodb.DynamoDB, d *schema.ResourceData) error {
+func SetTagsDynamoDb(conn *dynamodb.DynamoDB, d *schema.ResourceData) error {
 	arn := d.Get("arn").(string)
 	oraw, nraw := d.GetChange("tags")
 	o := oraw.(map[string]interface{})
 	n := nraw.(map[string]interface{})
-	create, remove := diffTagsDynamoDb(tagsFromMapDynamoDb(o), tagsFromMapDynamoDb(n))
+	create, remove := DiffTagsDynamoDb(TagsFromMapDynamoDb(o), TagsFromMapDynamoDb(n))
 
 	// Set tags
 	if len(remove) > 0 {
@@ -382,10 +382,10 @@ func setTagsDynamoDb(conn *dynamodb.DynamoDB, d *schema.ResourceData) error {
 	return nil
 }
 
-// diffTagsDynamoDb takes a local set of dynamodb tags and the ones found remotely
+// DiffTagsDynamoDb takes a local set of dynamodb tags and the ones found remotely
 // and returns the set of tags that must be created as a map, and returns a list of tag keys
 // that must be destroyed.
-func diffTagsDynamoDb(oldTags, newTags []*dynamodb.Tag) ([]*dynamodb.Tag, []*string) {
+func DiffTagsDynamoDb(oldTags, newTags []*dynamodb.Tag) ([]*dynamodb.Tag, []*string) {
 	create := make(map[string]interface{})
 	for _, t := range newTags {
 		create[*t.Key] = *t.Value
@@ -399,5 +399,5 @@ func diffTagsDynamoDb(oldTags, newTags []*dynamodb.Tag) ([]*dynamodb.Tag, []*str
 			remove = append(remove, t.Key)
 		}
 	}
-	return tagsFromMapDynamoDb(create), remove
+	return TagsFromMapDynamoDb(create), remove
 }

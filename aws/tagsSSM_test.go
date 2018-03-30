@@ -51,9 +51,9 @@ func TestDiffSSMTags(t *testing.T) {
 	}
 
 	for i, tc := range cases {
-		c, r := diffTagsSSM(tagsFromMapSSM(tc.Old), tagsFromMapSSM(tc.New))
-		cm := tagsToMapSSM(c)
-		rm := tagsToMapSSM(r)
+		c, r := DiffTagsSSM(TagsFromMapSSM(tc.Old), TagsFromMapSSM(tc.New))
+		cm := TagsToMapSSM(c)
+		rm := TagsToMapSSM(r)
 		if !reflect.DeepEqual(cm, tc.Create) {
 			t.Fatalf("%d: bad create: %#v", i, cm)
 		}
@@ -75,7 +75,7 @@ func TestIgnoringTagsSSM(t *testing.T) {
 		Value: aws.String("baz"),
 	})
 	for _, tag := range ignoredTags {
-		if !tagIgnoredSSM(tag) {
+		if !TagIgnoredSSM(tag) {
 			t.Fatalf("Tag %v with value %v not ignored, but should be!", *tag.Key, *tag.Value)
 		}
 	}
@@ -85,7 +85,7 @@ func TestIgnoringTagsSSM(t *testing.T) {
 func testAccCheckSSMTags(
 	ts []*ssm.Tag, key string, value string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		m := tagsToMapSSM(ts)
+		m := TagsToMapSSM(ts)
 		v, ok := m[key]
 		if value != "" && !ok {
 			return fmt.Errorf("Missing tag: %s", key)

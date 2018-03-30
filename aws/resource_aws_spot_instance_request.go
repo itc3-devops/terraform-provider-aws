@@ -234,7 +234,7 @@ func resourceAwsSpotInstanceRequestRead(d *schema.ResourceData, meta interface{}
 	d.Set("spot_request_state", request.State)
 	d.Set("launch_group", request.LaunchGroup)
 	d.Set("block_duration_minutes", request.BlockDurationMinutes)
-	d.Set("tags", tagsToMap(request.Tags))
+	d.Set("tags", TagsToMap(request.Tags))
 	d.Set("instance_interruption_behaviour", request.InstanceInterruptionBehavior)
 
 	return nil
@@ -318,7 +318,7 @@ func resourceAwsSpotInstanceRequestUpdate(d *schema.ResourceData, meta interface
 	conn := meta.(*AWSClient).ec2conn
 
 	d.Partial(true)
-	if err := setTags(conn, d); err != nil {
+	if err := SetTags(conn, d); err != nil {
 		return err
 	} else {
 		d.SetPartial("tags")

@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-// setTags is a helper to set the tags for a resource. It expects the
+// SetTags is a helper to set the tags for a resource. It expects the
 // tags field to be named "tags"
-func setTagsKMS(conn *kms.KMS, d *schema.ResourceData, keyId string) error {
+func SetTagsKMS(conn *kms.KMS, d *schema.ResourceData, keyId string) error {
 	if d.HasChange("tags") {
 		oraw, nraw := d.GetChange("tags")
 		o := oraw.(map[string]interface{})
 		n := nraw.(map[string]interface{})
-		create, remove := diffTagsKMS(tagsFromMapKMS(o), tagsFromMapKMS(n))
+		create, remove := DiffTagsKMS(TagsFromMapKMS(o), TagsFromMapKMS(n))
 
 		// Set tags
 		if len(remove) > 0 {
@@ -49,10 +49,10 @@ func setTagsKMS(conn *kms.KMS, d *schema.ResourceData, keyId string) error {
 	return nil
 }
 
-// diffTags takes our tags locally and the ones remotely and returns
+// DiffTags takes our tags locally and the ones remotely and returns
 // the set of tags that must be created, and the set of tags that must
 // be destroyed.
-func diffTagsKMS(oldTags, newTags []*kms.Tag) ([]*kms.Tag, []*kms.Tag) {
+func DiffTagsKMS(oldTags, newTags []*kms.Tag) ([]*kms.Tag, []*kms.Tag) {
 	// First, we're creating everything we have
 	create := make(map[string]interface{})
 	for _, t := range newTags {
@@ -69,18 +69,18 @@ func diffTagsKMS(oldTags, newTags []*kms.Tag) ([]*kms.Tag, []*kms.Tag) {
 		}
 	}
 
-	return tagsFromMapKMS(create), remove
+	return TagsFromMapKMS(create), remove
 }
 
-// tagsFromMap returns the tags for the given map of data.
-func tagsFromMapKMS(m map[string]interface{}) []*kms.Tag {
+// TagsFromMap returns the tags for the given map of data.
+func TagsFromMapKMS(m map[string]interface{}) []*kms.Tag {
 	result := make([]*kms.Tag, 0, len(m))
 	for k, v := range m {
 		t := &kms.Tag{
 			TagKey:   aws.String(k),
 			TagValue: aws.String(v.(string)),
 		}
-		if !tagIgnoredKMS(t) {
+		if !TagIgnoredKMS(t) {
 			result = append(result, t)
 		}
 	}
@@ -88,11 +88,11 @@ func tagsFromMapKMS(m map[string]interface{}) []*kms.Tag {
 	return result
 }
 
-// tagsToMap turns the list of tags into a map.
-func tagsToMapKMS(ts []*kms.Tag) map[string]string {
+// TagsToMap turns the list of tags into a map.
+func TagsToMapKMS(ts []*kms.Tag) map[string]string {
 	result := make(map[string]string)
 	for _, t := range ts {
-		if !tagIgnoredKMS(t) {
+		if !TagIgnoredKMS(t) {
 			result[aws.StringValue(t.TagKey)] = aws.StringValue(t.TagValue)
 		}
 	}
@@ -102,7 +102,7 @@ func tagsToMapKMS(ts []*kms.Tag) map[string]string {
 
 // compare a tag against a list of strings and checks if it should
 // be ignored or not
-func tagIgnoredKMS(t *kms.Tag) bool {
+func TagIgnoredKMS(t *kms.Tag) bool {
 	filter := []string{"^aws:"}
 	for _, v := range filter {
 		log.Printf("[DEBUG] Matching %v with %v\n", v, *t.TagKey)

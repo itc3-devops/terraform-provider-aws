@@ -11125,8 +11125,8 @@ func (s GetBucketTaggingOutput) GoString() string {
 	return s.String()
 }
 
-// SetTagSet sets the TagSet field's value.
-func (s *GetBucketTaggingOutput) SetTagSet(v []*Tag) *GetBucketTaggingOutput {
+// SetTagset sets the TagSet field's value.
+func (s *GetBucketTaggingOutput) SetTagset(v []*Tag) *GetBucketTaggingOutput {
 	s.TagSet = v
 	return s
 }
@@ -12019,8 +12019,8 @@ func (s GetObjectTaggingOutput) GoString() string {
 	return s.String()
 }
 
-// SetTagSet sets the TagSet field's value.
-func (s *GetObjectTaggingOutput) SetTagSet(v []*Tag) *GetObjectTaggingOutput {
+// SetTagset sets the TagSet field's value.
+func (s *GetObjectTaggingOutput) SetTagset(v []*Tag) *GetObjectTaggingOutput {
 	s.TagSet = v
 	return s
 }
@@ -19792,8 +19792,8 @@ func (s *Tagging) Validate() error {
 	return nil
 }
 
-// SetTagSet sets the TagSet field's value.
-func (s *Tagging) SetTagSet(v []*Tag) *Tagging {
+// SetTagset sets the TagSet field's value.
+func (s *Tagging) SetTagset(v []*Tag) *Tagging {
 	s.TagSet = v
 	return s
 }

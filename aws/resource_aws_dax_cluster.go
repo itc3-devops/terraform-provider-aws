@@ -102,7 +102,7 @@ func resourceAwsDaxCluster() *schema.Resource {
 				Computed: true,
 				ForceNew: true,
 			},
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 			"port": {
 				Type:     schema.TypeInt,
 				Computed: true,
@@ -154,7 +154,7 @@ func resourceAwsDaxClusterCreate(d *schema.ResourceData, meta interface{}) error
 	securityIdSet := d.Get("security_group_ids").(*schema.Set)
 
 	securityIds := expandStringList(securityIdSet.List())
-	tags := tagsFromMapDax(d.Get("tags").(map[string]interface{}))
+	tags := TagsFromMapDax(d.Get("tags").(map[string]interface{}))
 
 	req := &dax.CreateClusterInput{
 		ClusterName:       aws.String(clusterName),
@@ -306,7 +306,7 @@ func resourceAwsDaxClusterRead(d *schema.ResourceData, meta interface{}) error {
 		if len(resp.Tags) > 0 {
 			dt = resp.Tags
 		}
-		d.Set("tags", tagsToMapDax(dt))
+		d.Set("tags", TagsToMapDax(dt))
 	}
 
 	return nil
@@ -318,7 +318,7 @@ func resourceAwsDaxClusterUpdate(d *schema.ResourceData, meta interface{}) error
 	if err != nil {
 		log.Printf("[DEBUG] Error building ARN for DAX Cluster, not updating Tags for cluster %s", d.Id())
 	} else {
-		if err := setTagsDax(conn, d, arn); err != nil {
+		if err := SetTagsDax(conn, d, arn); err != nil {
 			return err
 		}
 	}

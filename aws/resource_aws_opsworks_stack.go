@@ -171,7 +171,7 @@ func resourceAwsOpsworksStack() *schema.Resource {
 				Default:  "Layer_Dependent",
 			},
 
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 
 			"use_custom_cookbooks": {
 				Type:     schema.TypeBool,
@@ -540,7 +540,7 @@ func resourceAwsOpsworksStackUpdate(d *schema.ResourceData, meta interface{}) er
 		Resource:  fmt.Sprintf("stack/%s/", d.Id()),
 	}
 
-	if tagErr := setTagsOpsworks(client, d, arn.String()); tagErr != nil {
+	if tagErr := SetTagsOpsworks(client, d, arn.String()); tagErr != nil {
 		return tagErr
 	}
 

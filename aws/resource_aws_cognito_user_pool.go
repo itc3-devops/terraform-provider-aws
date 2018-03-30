@@ -388,7 +388,7 @@ func resourceAwsCognitoUserPool() *schema.Resource {
 				ValidateFunc: validateCognitoUserPoolSmsVerificationMessage,
 			},
 
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 
 			"username_attributes": {
 				Type:     schema.TypeList,
@@ -586,7 +586,7 @@ func resourceAwsCognitoUserPoolCreate(d *schema.ResourceData, meta interface{}) 
 	}
 
 	if v, ok := d.GetOk("tags"); ok {
-		params.UserPoolTags = tagsFromMapGeneric(v.(map[string]interface{}))
+		params.UserPoolTags = TagsFromMapGeneric(v.(map[string]interface{}))
 	}
 	log.Printf("[DEBUG] Creating Cognito User Pool: %s", params)
 
@@ -708,7 +708,7 @@ func resourceAwsCognitoUserPoolRead(d *schema.ResourceData, meta interface{}) er
 	d.Set("creation_date", resp.UserPool.CreationDate.Format(time.RFC3339))
 	d.Set("last_modified_date", resp.UserPool.LastModifiedDate.Format(time.RFC3339))
 	d.Set("name", resp.UserPool.Name)
-	d.Set("tags", tagsToMapGeneric(resp.UserPool.UserPoolTags))
+	d.Set("tags", TagsToMapGeneric(resp.UserPool.UserPoolTags))
 
 	return nil
 }
@@ -838,7 +838,7 @@ func resourceAwsCognitoUserPoolUpdate(d *schema.ResourceData, meta interface{}) 
 	}
 
 	if v, ok := d.GetOk("tags"); ok {
-		params.UserPoolTags = tagsFromMapGeneric(v.(map[string]interface{}))
+		params.UserPoolTags = TagsFromMapGeneric(v.(map[string]interface{}))
 	}
 
 	log.Printf("[DEBUG] Updating Cognito User Pool: %s", params)

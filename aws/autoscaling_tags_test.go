@@ -151,7 +151,7 @@ func TestIgnoringTagsAutoscaling(t *testing.T) {
 		Value: aws.String("baz"),
 	})
 	for _, tag := range ignoredTags {
-		if !tagIgnoredAutoscaling(tag) {
+		if !TagIgnoredAutoscaling(tag) {
 			t.Fatalf("Tag %v with value %v not ignored, but should be!", *tag.Key, *tag.Value)
 		}
 	}

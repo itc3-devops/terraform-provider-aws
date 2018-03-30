@@ -37,7 +37,7 @@ func dataSourceAwsSecurityGroup() *schema.Resource {
 				Computed: true,
 			},
 
-			"tags": tagsSchemaComputed(),
+			"tags": TagsSchemaComputed(),
 
 			"description": {
 				Type:     schema.TypeString,
@@ -62,7 +62,7 @@ func dataSourceAwsSecurityGroupRead(d *schema.ResourceData, meta interface{}) er
 		},
 	)
 	req.Filters = append(req.Filters, buildEC2TagFilterList(
-		tagsFromMap(d.Get("tags").(map[string]interface{})),
+		TagsFromMap(d.Get("tags").(map[string]interface{})),
 	)...)
 	req.Filters = append(req.Filters, buildEC2CustomFilterList(
 		d.Get("filter").(*schema.Set),
@@ -90,7 +90,7 @@ func dataSourceAwsSecurityGroupRead(d *schema.ResourceData, meta interface{}) er
 	d.Set("name", sg.GroupName)
 	d.Set("description", sg.Description)
 	d.Set("vpc_id", sg.VpcId)
-	d.Set("tags", tagsToMap(sg.Tags))
+	d.Set("tags", TagsToMap(sg.Tags))
 	d.Set("arn", fmt.Sprintf("arn:%s:ec2:%s:%s:security-group/%s",
 		meta.(*AWSClient).partition, meta.(*AWSClient).region, *sg.OwnerId, *sg.GroupId))
 

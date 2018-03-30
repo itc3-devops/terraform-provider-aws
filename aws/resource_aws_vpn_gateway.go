@@ -44,7 +44,7 @@ func resourceAwsVpnGateway() *schema.Resource {
 				Computed: true,
 			},
 
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
@@ -115,7 +115,7 @@ func resourceAwsVpnGatewayRead(d *schema.ResourceData, meta interface{}) error {
 		d.Set("availability_zone", vpnGateway.AvailabilityZone)
 	}
 	d.Set("amazon_side_asn", strconv.FormatInt(aws.Int64Value(vpnGateway.AmazonSideAsn), 10))
-	d.Set("tags", tagsToMap(vpnGateway.Tags))
+	d.Set("tags", TagsToMap(vpnGateway.Tags))
 
 	return nil
 }
@@ -135,7 +135,7 @@ func resourceAwsVpnGatewayUpdate(d *schema.ResourceData, meta interface{}) error
 
 	conn := meta.(*AWSClient).ec2conn
 
-	if err := setTags(conn, d); err != nil {
+	if err := SetTags(conn, d); err != nil {
 		return err
 	}
 

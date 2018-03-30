@@ -50,7 +50,7 @@ func autoscalingTagToHash(v interface{}) int {
 	return hashcode.String(buf.String())
 }
 
-// setTags is a helper to set the tags for a resource. It expects the
+// SetTags is a helper to set the tags for a resource. It expects the
 // tags field to be named "tag"
 func setAutoscalingTags(conn *autoscaling.AutoScaling, d *schema.ResourceData) error {
 	resourceID := d.Get("name").(string)
@@ -127,7 +127,7 @@ func setAutoscalingTags(conn *autoscaling.AutoScaling, d *schema.ResourceData) e
 	return nil
 }
 
-// diffTags takes our tags locally and the ones remotely and returns
+// DiffTags takes our tags locally and the ones remotely and returns
 // the set of tags that must be created, and the set of tags that must
 // be destroyed.
 func diffAutoscalingTags(oldTags, newTags []*autoscaling.Tag, resourceID string) ([]*autoscaling.Tag, []*autoscaling.Tag, error) {
@@ -181,7 +181,7 @@ func autoscalingTagsFromList(vs []interface{}, resourceID string) ([]*autoscalin
 	return result, nil
 }
 
-// tagsFromMap returns the tags for the given map of data.
+// TagsFromMap returns the tags for the given map of data.
 func autoscalingTagsFromMap(m map[string]interface{}, resourceID string) ([]*autoscaling.Tag, error) {
 	result := make([]*autoscaling.Tag, 0, len(m))
 	for _, v := range m {
@@ -241,7 +241,7 @@ func autoscalingTagFromMap(attr map[string]interface{}, resourceID string) (*aut
 		ResourceType:      aws.String("auto-scaling-group"),
 	}
 
-	if tagIgnoredAutoscaling(t) {
+	if TagIgnoredAutoscaling(t) {
 		return nil, nil
 	}
 
@@ -304,7 +304,7 @@ func setToMapByKey(s *schema.Set, key string) map[string]interface{} {
 
 // compare a tag against a list of strings and checks if it should
 // be ignored or not
-func tagIgnoredAutoscaling(t *autoscaling.Tag) bool {
+func TagIgnoredAutoscaling(t *autoscaling.Tag) bool {
 	filter := []string{"^aws:"}
 	for _, v := range filter {
 		log.Printf("[DEBUG] Matching %v with %v\n", v, *t.Key)

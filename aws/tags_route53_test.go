@@ -50,9 +50,9 @@ func TestDiffTagsR53(t *testing.T) {
 	}
 
 	for i, tc := range cases {
-		c, r := diffTagsR53(tagsFromMapR53(tc.Old), tagsFromMapR53(tc.New))
-		cm := tagsToMapR53(c)
-		rm := tagsToMapR53(r)
+		c, r := DiffTagsR53(TagsFromMapR53(tc.Old), TagsFromMapR53(tc.New))
+		cm := TagsToMapR53(c)
+		rm := TagsToMapR53(r)
 		if !reflect.DeepEqual(cm, tc.Create) {
 			t.Fatalf("%d: bad create: %#v", i, cm)
 		}
@@ -73,7 +73,7 @@ func TestIgnoringTagsRoute53(t *testing.T) {
 		Value: aws.String("baz"),
 	})
 	for _, tag := range ignoredTags {
-		if !tagIgnoredRoute53(tag) {
+		if !TagIgnoredRoute53(tag) {
 			t.Fatalf("Tag %v with value %v not ignored, but should be!", *tag.Key, *tag.Value)
 		}
 	}
@@ -83,7 +83,7 @@ func TestIgnoringTagsRoute53(t *testing.T) {
 func testAccCheckTagsR53(
 	ts *[]*route53.Tag, key string, value string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		m := tagsToMapR53(*ts)
+		m := TagsToMapR53(*ts)
 		v, ok := m[key]
 		if value != "" && !ok {
 			return fmt.Errorf("Missing tag: %s", key)

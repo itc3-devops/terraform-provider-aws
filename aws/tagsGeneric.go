@@ -7,10 +7,13 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 )
 
-// diffTags takes our tags locally and the ones remotely and returns
+
+
+
+// DiffTags takes our tags locally and the ones remotely and returns
 // the set of tags that must be created, and the set of tags that must
 // be destroyed.
-func diffTagsGeneric(oldTags, newTags map[string]interface{}) (map[string]*string, map[string]*string) {
+func DiffTagsGeneric(oldTags, newTags map[string]interface{}) (map[string]*string, map[string]*string) {
 	// First, we're creating everything we have
 	create := make(map[string]*string)
 	for k, v := range newTags {
@@ -30,11 +33,11 @@ func diffTagsGeneric(oldTags, newTags map[string]interface{}) (map[string]*strin
 	return create, remove
 }
 
-// tagsFromMap returns the tags for the given map of data.
-func tagsFromMapGeneric(m map[string]interface{}) map[string]*string {
+// TagsFromMap returns the tags for the given map of data.
+func TagsFromMapGeneric(m map[string]interface{}) map[string]*string {
 	result := make(map[string]*string)
 	for k, v := range m {
-		if !tagIgnoredGeneric(k) {
+		if !TagIgnoredGeneric(k) {
 			result[k] = aws.String(v.(string))
 		}
 	}
@@ -42,11 +45,11 @@ func tagsFromMapGeneric(m map[string]interface{}) map[string]*string {
 	return result
 }
 
-// tagsToMap turns the tags into a map.
-func tagsToMapGeneric(ts map[string]*string) map[string]string {
+// TagsToMap turns the tags into a map.
+func TagsToMapGeneric(ts map[string]*string) map[string]string {
 	result := make(map[string]string)
 	for k, v := range ts {
-		if !tagIgnoredGeneric(k) {
+		if !TagIgnoredGeneric(k) {
 			result[k] = aws.StringValue(v)
 		}
 	}
@@ -56,7 +59,7 @@ func tagsToMapGeneric(ts map[string]*string) map[string]string {
 
 // compare a tag against a list of strings and checks if it should
 // be ignored or not
-func tagIgnoredGeneric(k string) bool {
+func TagIgnoredGeneric(k string) bool {
 	filter := []string{"^aws:"}
 	for _, v := range filter {
 		log.Printf("[DEBUG] Matching %v with %v\n", v, k)

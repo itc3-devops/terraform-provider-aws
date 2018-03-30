@@ -48,9 +48,9 @@ func TestDiffDXTags(t *testing.T) {
 	}
 
 	for i, tc := range cases {
-		c, r := diffTagsDX(tagsFromMapDX(tc.Old), tagsFromMapDX(tc.New))
-		cm := tagsToMapDX(c)
-		rm := tagsToMapDX(r)
+		c, r := DiffTagsDX(TagsFromMapDX(tc.Old), TagsFromMapDX(tc.New))
+		cm := TagsToMapDX(c)
+		rm := TagsToMapDX(r)
 		if !reflect.DeepEqual(cm, tc.Create) {
 			t.Fatalf("%d: bad create: %#v", i, cm)
 		}
@@ -72,7 +72,7 @@ func TestIgnoringTagsDX(t *testing.T) {
 		Value: aws.String("baz"),
 	})
 	for _, tag := range ignoredTags {
-		if !tagIgnoredDX(tag) {
+		if !TagIgnoredDX(tag) {
 			t.Fatalf("Tag %v with value %v not ignored, but should be!", *tag.Key, *tag.Value)
 		}
 	}

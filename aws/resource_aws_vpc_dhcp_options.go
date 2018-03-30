@@ -166,7 +166,7 @@ func resourceAwsVpcDhcpOptionsRead(d *schema.ResourceData, meta interface{}) err
 	}
 
 	opts := resp.DhcpOptions[0]
-	d.Set("tags", tagsToMap(opts.Tags))
+	d.Set("tags", TagsToMap(opts.Tags))
 
 	for _, cfg := range opts.DhcpConfigurations {
 		tfKey := strings.Replace(*cfg.Key, "-", "_", -1)
@@ -188,7 +188,7 @@ func resourceAwsVpcDhcpOptionsRead(d *schema.ResourceData, meta interface{}) err
 
 func resourceAwsVpcDhcpOptionsUpdate(d *schema.ResourceData, meta interface{}) error {
 	conn := meta.(*AWSClient).ec2conn
-	return setTags(conn, d)
+	return SetTags(conn, d)
 }
 
 func resourceAwsVpcDhcpOptionsDelete(d *schema.ResourceData, meta interface{}) error {

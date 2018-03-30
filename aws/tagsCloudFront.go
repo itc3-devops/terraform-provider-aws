@@ -8,12 +8,12 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-func setTagsCloudFront(conn *cloudfront.CloudFront, d *schema.ResourceData, arn string) error {
+func SetTagsCloudFront(conn *cloudfront.CloudFront, d *schema.ResourceData, arn string) error {
 	if d.HasChange("tags") {
 		oraw, nraw := d.GetChange("tags")
 		o := oraw.(map[string]interface{})
 		n := nraw.(map[string]interface{})
-		create, remove := diffTagsCloudFront(tagsFromMapCloudFront(o), tagsFromMapCloudFront(n))
+		create, remove := DiffTagsCloudFront(TagsFromMapCloudFront(o), TagsFromMapCloudFront(n))
 
 		if len(remove) > 0 {
 			log.Printf("[DEBUG] Removing tags: %s", remove)
@@ -50,7 +50,7 @@ func setTagsCloudFront(conn *cloudfront.CloudFront, d *schema.ResourceData, arn 
 
 	return nil
 }
-func diffTagsCloudFront(oldTags, newTags *cloudfront.Tags) ([]*cloudfront.Tag, []*cloudfront.Tag) {
+func DiffTagsCloudFront(oldTags, newTags *cloudfront.Tags) ([]*cloudfront.Tag, []*cloudfront.Tag) {
 	// First, we're creating everything we have
 	create := make(map[string]interface{})
 	for _, t := range newTags.Items {
@@ -67,11 +67,11 @@ func diffTagsCloudFront(oldTags, newTags *cloudfront.Tags) ([]*cloudfront.Tag, [
 		}
 	}
 
-	createTags := tagsFromMapCloudFront(create)
+	createTags := TagsFromMapCloudFront(create)
 	return createTags.Items, remove
 }
 
-func tagsFromMapCloudFront(m map[string]interface{}) *cloudfront.Tags {
+func TagsFromMapCloudFront(m map[string]interface{}) *cloudfront.Tags {
 	result := make([]*cloudfront.Tag, 0, len(m))
 	for k, v := range m {
 		result = append(result, &cloudfront.Tag{
@@ -87,7 +87,7 @@ func tagsFromMapCloudFront(m map[string]interface{}) *cloudfront.Tags {
 	return tags
 }
 
-func tagsToMapCloudFront(ts *cloudfront.Tags) map[string]string {
+func TagsToMapCloudFront(ts *cloudfront.Tags) map[string]string {
 	result := make(map[string]string)
 
 	for _, t := range ts.Items {

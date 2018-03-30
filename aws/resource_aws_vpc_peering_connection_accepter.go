@@ -48,7 +48,7 @@ func resourceAwsVpcPeeringConnectionAccepter() *schema.Resource {
 			},
 			"accepter":  vpcPeeringConnectionOptionsSchema(),
 			"requester": vpcPeeringConnectionOptionsSchema(),
-			"tags":      tagsSchema(),
+			"tags":      TagsSchema(),
 		},
 	}
 }

@@ -67,8 +67,8 @@ func buildEC2AttributeFilterList(attrs map[string]string) []*ec2.Filter {
 // data sources that retrieve data about EC2 objects.
 //
 // It is conventional for an EC2 data source to include an attribute called
-// "tags" which conforms to the schema returned by the tagsSchema() function.
-// The value of this can then be converted to a tags slice using tagsFromMap,
+// "tags" which conforms to the schema returned by the TagsSchema() function.
+// The value of this can then be converted to a tags slice using TagsFromMap,
 // and the result finally passed in to this function.
 //
 // In Terraform configuration this would then look like this, to constrain

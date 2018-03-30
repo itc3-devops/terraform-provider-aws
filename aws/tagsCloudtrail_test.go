@@ -50,9 +50,9 @@ func TestDiffCloudtrailTags(t *testing.T) {
 	}
 
 	for i, tc := range cases {
-		c, r := diffTagsCloudtrail(tagsFromMapCloudtrail(tc.Old), tagsFromMapCloudtrail(tc.New))
-		cm := tagsToMapCloudtrail(c)
-		rm := tagsToMapCloudtrail(r)
+		c, r := DiffTagsCloudtrail(TagsFromMapCloudtrail(tc.Old), TagsFromMapCloudtrail(tc.New))
+		cm := TagsToMapCloudtrail(c)
+		rm := TagsToMapCloudtrail(r)
 		if !reflect.DeepEqual(cm, tc.Create) {
 			t.Fatalf("%d: bad create: %#v", i, cm)
 		}
@@ -73,7 +73,7 @@ func TestIgnoringTagsCloudtrail(t *testing.T) {
 		Value: aws.String("baz"),
 	})
 	for _, tag := range ignoredTags {
-		if !tagIgnoredCloudtrail(tag) {
+		if !TagIgnoredCloudtrail(tag) {
 			t.Fatalf("Tag %v with value %v not ignored, but should be!", *tag.Key, *tag.Value)
 		}
 	}
@@ -82,9 +82,9 @@ func TestIgnoringTagsCloudtrail(t *testing.T) {
 // testAccCheckCloudTrailCheckTags can be used to check the tags on a trail
 func testAccCheckCloudTrailCheckTags(tags *[]*cloudtrail.Tag, expectedTags map[string]string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		if !reflect.DeepEqual(expectedTags, tagsToMapCloudtrail(*tags)) {
+		if !reflect.DeepEqual(expectedTags, TagsToMapCloudtrail(*tags)) {
 			return fmt.Errorf("Tags mismatch.\nExpected: %#v\nGiven: %#v",
-				expectedTags, tagsToMapCloudtrail(*tags))
+				expectedTags, TagsToMapCloudtrail(*tags))
 		}
 		return nil
 	}

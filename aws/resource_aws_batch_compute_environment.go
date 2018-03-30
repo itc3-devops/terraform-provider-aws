@@ -90,7 +90,7 @@ func resourceAwsBatchComputeEnvironment() *schema.Resource {
 							ForceNew: true,
 							Elem:     &schema.Schema{Type: schema.TypeString},
 						},
-						"tags": tagsSchema(),
+						"tags": TagsSchema(),
 						"type": {
 							Type:         schema.TypeString,
 							Required:     true,
@@ -213,7 +213,7 @@ func resourceAwsBatchComputeEnvironmentCreate(d *schema.ResourceData, meta inter
 			input.ComputeResources.SpotIamFleetRole = aws.String(v.(string))
 		}
 		if v, ok := computeResource["tags"]; ok {
-			input.ComputeResources.Tags = tagsFromMapGeneric(v.(map[string]interface{}))
+			input.ComputeResources.Tags = TagsFromMapGeneric(v.(map[string]interface{}))
 		}
 	}
 
@@ -296,7 +296,7 @@ func flattenBatchComputeResources(computeResource *batch.ComputeResource) []map[
 	m["security_group_ids"] = schema.NewSet(schema.HashString, flattenStringList(computeResource.SecurityGroupIds))
 	m["spot_iam_fleet_role"] = aws.StringValue(computeResource.SpotIamFleetRole)
 	m["subnets"] = schema.NewSet(schema.HashString, flattenStringList(computeResource.Subnets))
-	m["tags"] = tagsToMapGeneric(computeResource.Tags)
+	m["tags"] = TagsToMapGeneric(computeResource.Tags)
 	m["type"] = aws.StringValue(computeResource.Type)
 
 	result = append(result, m)

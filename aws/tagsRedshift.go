@@ -9,12 +9,12 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-func setTagsRedshift(conn *redshift.Redshift, d *schema.ResourceData, arn string) error {
+func SetTagsRedshift(conn *redshift.Redshift, d *schema.ResourceData, arn string) error {
 	if d.HasChange("tags") {
 		oraw, nraw := d.GetChange("tags")
 		o := oraw.(map[string]interface{})
 		n := nraw.(map[string]interface{})
-		create, remove := diffTagsRedshift(tagsFromMapRedshift(o), tagsFromMapRedshift(n))
+		create, remove := DiffTagsRedshift(TagsFromMapRedshift(o), TagsFromMapRedshift(n))
 
 		// Set tags
 		if len(remove) > 0 {
@@ -47,7 +47,7 @@ func setTagsRedshift(conn *redshift.Redshift, d *schema.ResourceData, arn string
 	return nil
 }
 
-func diffTagsRedshift(oldTags, newTags []*redshift.Tag) ([]*redshift.Tag, []*redshift.Tag) {
+func DiffTagsRedshift(oldTags, newTags []*redshift.Tag) ([]*redshift.Tag, []*redshift.Tag) {
 	// First, we're creating everything we have
 	create := make(map[string]interface{})
 	for _, t := range newTags {
@@ -64,17 +64,17 @@ func diffTagsRedshift(oldTags, newTags []*redshift.Tag) ([]*redshift.Tag, []*red
 		}
 	}
 
-	return tagsFromMapRedshift(create), remove
+	return TagsFromMapRedshift(create), remove
 }
 
-func tagsFromMapRedshift(m map[string]interface{}) []*redshift.Tag {
+func TagsFromMapRedshift(m map[string]interface{}) []*redshift.Tag {
 	result := make([]*redshift.Tag, 0, len(m))
 	for k, v := range m {
 		t := &redshift.Tag{
 			Key:   aws.String(k),
 			Value: aws.String(v.(string)),
 		}
-		if !tagIgnoredRedshift(t) {
+		if !TagIgnoredRedshift(t) {
 			result = append(result, t)
 		}
 	}
@@ -82,10 +82,10 @@ func tagsFromMapRedshift(m map[string]interface{}) []*redshift.Tag {
 	return result
 }
 
-func tagsToMapRedshift(ts []*redshift.Tag) map[string]string {
+func TagsToMapRedshift(ts []*redshift.Tag) map[string]string {
 	result := make(map[string]string)
 	for _, t := range ts {
-		if !tagIgnoredRedshift(t) {
+		if !TagIgnoredRedshift(t) {
 			result[*t.Key] = *t.Value
 		}
 	}
@@ -95,7 +95,7 @@ func tagsToMapRedshift(ts []*redshift.Tag) map[string]string {
 
 // compare a tag against a list of strings and checks if it should
 // be ignored or not
-func tagIgnoredRedshift(t *redshift.Tag) bool {
+func TagIgnoredRedshift(t *redshift.Tag) bool {
 	filter := []string{"^aws:"}
 	for _, v := range filter {
 		log.Printf("[DEBUG] Matching %v with %v\n", v, *t.Key)

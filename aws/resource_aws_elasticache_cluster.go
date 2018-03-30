@@ -135,7 +135,7 @@ func resourceAwsElastiCacheCommonSchema() map[string]*schema.Schema {
 			Computed: true,
 		},
 
-		"tags": tagsSchema(),
+		"tags": TagsSchema(),
 	}
 }
 
@@ -346,7 +346,7 @@ func resourceAwsElasticacheClusterCreate(d *schema.ResourceData, meta interface{
 		securityIdSet := d.Get("security_group_ids").(*schema.Set)
 		securityNames := expandStringList(securityNameSet.List())
 		securityIds := expandStringList(securityIdSet.List())
-		tags := tagsFromMapEC(d.Get("tags").(map[string]interface{}))
+		tags := TagsFromMapEC(d.Get("tags").(map[string]interface{}))
 
 		req.CacheSecurityGroupNames = securityNames
 		req.SecurityGroupIds = securityIds
@@ -536,7 +536,7 @@ func resourceAwsElasticacheClusterRead(d *schema.ResourceData, meta interface{})
 			if len(resp.TagList) > 0 {
 				et = resp.TagList
 			}
-			d.Set("tags", tagsToMapEC(et))
+			d.Set("tags", TagsToMapEC(et))
 		}
 	}
 
@@ -549,7 +549,7 @@ func resourceAwsElasticacheClusterUpdate(d *schema.ResourceData, meta interface{
 	if err != nil {
 		log.Printf("[DEBUG] Error building ARN for ElastiCache Cluster, not updating Tags for cluster %s", d.Id())
 	} else {
-		if err := setTagsEC(conn, d, arn); err != nil {
+		if err := SetTagsEC(conn, d, arn); err != nil {
 			return err
 		}
 	}

@@ -47,9 +47,9 @@ func TestDiffTagsS3(t *testing.T) {
 	}
 
 	for i, tc := range cases {
-		c, r := diffTagsS3(tagsFromMapS3(tc.Old), tagsFromMapS3(tc.New))
-		cm := tagsToMapS3(c)
-		rm := tagsToMapS3(r)
+		c, r := DiffTagsS3(TagsFromMapS3(tc.Old), TagsFromMapS3(tc.New))
+		cm := TagsToMapS3(c)
+		rm := TagsToMapS3(r)
 		if !reflect.DeepEqual(cm, tc.Create) {
 			t.Fatalf("%d: bad create: %#v", i, cm)
 		}
@@ -70,7 +70,7 @@ func TestIgnoringTagsS3(t *testing.T) {
 		Value: aws.String("baz"),
 	})
 	for _, tag := range ignoredTags {
-		if !tagIgnoredS3(tag) {
+		if !TagIgnoredS3(tag) {
 			t.Fatalf("Tag %v with value %v not ignored, but should be!", *tag.Key, *tag.Value)
 		}
 	}

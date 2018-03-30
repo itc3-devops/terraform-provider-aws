@@ -41,7 +41,7 @@ func dataSourceAwsVpnGateway() *schema.Resource {
 				Computed: true,
 			},
 			"filter": ec2CustomFiltersSchema(),
-			"tags":   tagsSchemaComputed(),
+			"tags":   TagsSchemaComputed(),
 		},
 	}
 }
@@ -77,7 +77,7 @@ func dataSourceAwsVpnGatewayRead(d *schema.ResourceData, meta interface{}) error
 		)...)
 	}
 	req.Filters = append(req.Filters, buildEC2TagFilterList(
-		tagsFromMap(d.Get("tags").(map[string]interface{})),
+		TagsFromMap(d.Get("tags").(map[string]interface{})),
 	)...)
 	req.Filters = append(req.Filters, buildEC2CustomFilterList(
 		d.Get("filter").(*schema.Set),
@@ -105,7 +105,7 @@ func dataSourceAwsVpnGatewayRead(d *schema.ResourceData, meta interface{}) error
 	d.Set("state", vgw.State)
 	d.Set("availability_zone", vgw.AvailabilityZone)
 	d.Set("amazon_side_asn", strconv.FormatInt(aws.Int64Value(vgw.AmazonSideAsn), 10))
-	d.Set("tags", tagsToMap(vgw.Tags))
+	d.Set("tags", TagsToMap(vgw.Tags))
 
 	for _, attachment := range vgw.VpcAttachments {
 		if *attachment.State == "attached" {

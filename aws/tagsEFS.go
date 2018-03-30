@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-// setTags is a helper to set the tags for a resource. It expects the
+// SetTags is a helper to set the tags for a resource. It expects the
 // tags field to be named "tags"
-func setTagsEFS(conn *efs.EFS, d *schema.ResourceData) error {
+func SetTagsEFS(conn *efs.EFS, d *schema.ResourceData) error {
 	if d.HasChange("tags") {
 		oraw, nraw := d.GetChange("tags")
 		o := oraw.(map[string]interface{})
 		n := nraw.(map[string]interface{})
-		create, remove := diffTagsEFS(tagsFromMapEFS(o), tagsFromMapEFS(n))
+		create, remove := DiffTagsEFS(TagsFromMapEFS(o), TagsFromMapEFS(n))
 
 		// Set tags
 		if len(remove) > 0 {
@@ -48,10 +48,10 @@ func setTagsEFS(conn *efs.EFS, d *schema.ResourceData) error {
 	return nil
 }
 
-// diffTags takes our tags locally and the ones remotely and returns
+// DiffTags takes our tags locally and the ones remotely and returns
 // the set of tags that must be created, and the set of tags that must
 // be destroyed.
-func diffTagsEFS(oldTags, newTags []*efs.Tag) ([]*efs.Tag, []*efs.Tag) {
+func DiffTagsEFS(oldTags, newTags []*efs.Tag) ([]*efs.Tag, []*efs.Tag) {
 	// First, we're creating everything we have
 	create := make(map[string]interface{})
 	for _, t := range newTags {
@@ -68,18 +68,18 @@ func diffTagsEFS(oldTags, newTags []*efs.Tag) ([]*efs.Tag, []*efs.Tag) {
 		}
 	}
 
-	return tagsFromMapEFS(create), remove
+	return TagsFromMapEFS(create), remove
 }
 
-// tagsFromMap returns the tags for the given map of data.
-func tagsFromMapEFS(m map[string]interface{}) []*efs.Tag {
+// TagsFromMap returns the tags for the given map of data.
+func TagsFromMapEFS(m map[string]interface{}) []*efs.Tag {
 	var result []*efs.Tag
 	for k, v := range m {
 		t := &efs.Tag{
 			Key:   aws.String(k),
 			Value: aws.String(v.(string)),
 		}
-		if !tagIgnoredEFS(t) {
+		if !TagIgnoredEFS(t) {
 			result = append(result, t)
 		}
 	}
@@ -87,11 +87,11 @@ func tagsFromMapEFS(m map[string]interface{}) []*efs.Tag {
 	return result
 }
 
-// tagsToMap turns the list of tags into a map.
-func tagsToMapEFS(ts []*efs.Tag) map[string]string {
+// TagsToMap turns the list of tags into a map.
+func TagsToMapEFS(ts []*efs.Tag) map[string]string {
 	result := make(map[string]string)
 	for _, t := range ts {
-		if !tagIgnoredEFS(t) {
+		if !TagIgnoredEFS(t) {
 			result[*t.Key] = *t.Value
 		}
 	}
@@ -101,7 +101,7 @@ func tagsToMapEFS(ts []*efs.Tag) map[string]string {
 
 // compare a tag against a list of strings and checks if it should
 // be ignored or not
-func tagIgnoredEFS(t *efs.Tag) bool {
+func TagIgnoredEFS(t *efs.Tag) bool {
 	filter := []string{"^aws:"}
 	for _, v := range filter {
 		log.Printf("[DEBUG] Matching %v with %v\n", v, *t.Key)

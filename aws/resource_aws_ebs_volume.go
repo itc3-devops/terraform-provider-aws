@@ -69,7 +69,7 @@ func resourceAwsEbsVolume() *schema.Resource {
 				Optional: true,
 				Computed: true,
 			},
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
@@ -140,7 +140,7 @@ func resourceAwsEbsVolumeCreate(d *schema.ResourceData, meta interface{}) error 
 	d.SetId(*result.VolumeId)
 
 	if _, ok := d.GetOk("tags"); ok {
-		if err := setTags(conn, d); err != nil {
+		if err := SetTags(conn, d); err != nil {
 			return errwrap.Wrapf("Error setting tags for EBS Volume: {{err}}", err)
 		}
 	}
@@ -151,7 +151,7 @@ func resourceAwsEbsVolumeCreate(d *schema.ResourceData, meta interface{}) error 
 func resourceAWSEbsVolumeUpdate(d *schema.ResourceData, meta interface{}) error {
 	conn := meta.(*AWSClient).ec2conn
 	if _, ok := d.GetOk("tags"); ok {
-		if err := setTags(conn, d); err != nil {
+		if err := SetTags(conn, d); err != nil {
 			return errwrap.Wrapf("Error updating tags for EBS Volume: {{err}}", err)
 		}
 	}
@@ -311,7 +311,7 @@ func readVolume(d *schema.ResourceData, client *AWSClient, volume *ec2.Volume) e
 		}
 	}
 
-	d.Set("tags", tagsToMap(volume.Tags))
+	d.Set("tags", TagsToMap(volume.Tags))
 
 	return nil
 }

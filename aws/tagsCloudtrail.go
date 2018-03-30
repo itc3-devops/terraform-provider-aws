@@ -9,14 +9,14 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-// setTags is a helper to set the tags for a resource. It expects the
+// SetTags is a helper to set the tags for a resource. It expects the
 // tags field to be named "tags"
-func setTagsCloudtrail(conn *cloudtrail.CloudTrail, d *schema.ResourceData) error {
+func SetTagsCloudtrail(conn *cloudtrail.CloudTrail, d *schema.ResourceData) error {
 	if d.HasChange("tags") {
 		oraw, nraw := d.GetChange("tags")
 		o := oraw.(map[string]interface{})
 		n := nraw.(map[string]interface{})
-		create, remove := diffTagsCloudtrail(tagsFromMapCloudtrail(o), tagsFromMapCloudtrail(n))
+		create, remove := DiffTagsCloudtrail(TagsFromMapCloudtrail(o), TagsFromMapCloudtrail(n))
 
 		// Set tags
 		if len(remove) > 0 {
@@ -46,10 +46,10 @@ func setTagsCloudtrail(conn *cloudtrail.CloudTrail, d *schema.ResourceData) erro
 	return nil
 }
 
-// diffTags takes our tags locally and the ones remotely and returns
+// DiffTags takes our tags locally and the ones remotely and returns
 // the set of tags that must be created, and the set of tags that must
 // be destroyed.
-func diffTagsCloudtrail(oldTags, newTags []*cloudtrail.Tag) ([]*cloudtrail.Tag, []*cloudtrail.Tag) {
+func DiffTagsCloudtrail(oldTags, newTags []*cloudtrail.Tag) ([]*cloudtrail.Tag, []*cloudtrail.Tag) {
 	// First, we're creating everything we have
 	create := make(map[string]interface{})
 	for _, t := range newTags {
@@ -66,18 +66,18 @@ func diffTagsCloudtrail(oldTags, newTags []*cloudtrail.Tag) ([]*cloudtrail.Tag, 
 		}
 	}
 
-	return tagsFromMapCloudtrail(create), remove
+	return TagsFromMapCloudtrail(create), remove
 }
 
-// tagsFromMap returns the tags for the given map of data.
-func tagsFromMapCloudtrail(m map[string]interface{}) []*cloudtrail.Tag {
+// TagsFromMap returns the tags for the given map of data.
+func TagsFromMapCloudtrail(m map[string]interface{}) []*cloudtrail.Tag {
 	var result []*cloudtrail.Tag
 	for k, v := range m {
 		t := &cloudtrail.Tag{
 			Key:   aws.String(k),
 			Value: aws.String(v.(string)),
 		}
-		if !tagIgnoredCloudtrail(t) {
+		if !TagIgnoredCloudtrail(t) {
 			result = append(result, t)
 		}
 	}
@@ -85,11 +85,11 @@ func tagsFromMapCloudtrail(m map[string]interface{}) []*cloudtrail.Tag {
 	return result
 }
 
-// tagsToMap turns the list of tags into a map.
-func tagsToMapCloudtrail(ts []*cloudtrail.Tag) map[string]string {
+// TagsToMap turns the list of tags into a map.
+func TagsToMapCloudtrail(ts []*cloudtrail.Tag) map[string]string {
 	result := make(map[string]string)
 	for _, t := range ts {
-		if !tagIgnoredCloudtrail(t) {
+		if !TagIgnoredCloudtrail(t) {
 			result[*t.Key] = *t.Value
 		}
 	}
@@ -99,7 +99,7 @@ func tagsToMapCloudtrail(ts []*cloudtrail.Tag) map[string]string {
 
 // compare a tag against a list of strings and checks if it should
 // be ignored or not
-func tagIgnoredCloudtrail(t *cloudtrail.Tag) bool {
+func TagIgnoredCloudtrail(t *cloudtrail.Tag) bool {
 	filter := []string{"^aws:"}
 	for _, v := range filter {
 		log.Printf("[DEBUG] Matching %v with %v\n", v, *t.Key)

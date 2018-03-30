@@ -57,7 +57,7 @@ func resourceAwsVpcPeeringConnection() *schema.Resource {
 			},
 			"accepter":  vpcPeeringConnectionOptionsSchema(),
 			"requester": vpcPeeringConnectionOptionsSchema(),
-			"tags":      tagsSchema(),
+			"tags":      TagsSchema(),
 		},
 	}
 }
@@ -175,7 +175,7 @@ func resourceAwsVPCPeeringRead(d *schema.ResourceData, meta interface{}) error {
 		}
 	}
 
-	err = d.Set("tags", tagsToMap(pc.Tags))
+	err = d.Set("tags", TagsToMap(pc.Tags))
 	if err != nil {
 		return errwrap.Wrapf("Error setting VPC Peering Connection tags: {{err}}", err)
 	}
@@ -231,7 +231,7 @@ func resourceVPCPeeringConnectionOptionsModify(d *schema.ResourceData, meta inte
 func resourceAwsVPCPeeringUpdate(d *schema.ResourceData, meta interface{}) error {
 	conn := meta.(*AWSClient).ec2conn
 
-	if err := setTags(conn, d); err != nil {
+	if err := SetTags(conn, d); err != nil {
 		return err
 	} else {
 		d.SetPartial("tags")

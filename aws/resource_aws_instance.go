@@ -272,9 +272,9 @@ func resourceAwsInstance() *schema.Resource {
 				ForceNew: true,
 			},
 
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 
-			"volume_tags": tagsSchemaComputed(),
+			"volume_tags": TagsSchemaComputed(),
 
 			"block_device": {
 				Type:     schema.TypeMap,
@@ -489,7 +489,7 @@ func resourceAwsInstanceCreate(d *schema.ResourceData, meta interface{}) error {
 		tagsSpec := make([]*ec2.TagSpecification, 0)
 
 		if v, ok := d.GetOk("tags"); ok {
-			tags := tagsFromMap(v.(map[string]interface{}))
+			tags := TagsFromMap(v.(map[string]interface{}))
 
 			spec := &ec2.TagSpecification{
 				ResourceType: aws.String("instance"),
@@ -500,7 +500,7 @@ func resourceAwsInstanceCreate(d *schema.ResourceData, meta interface{}) error {
 		}
 
 		if v, ok := d.GetOk("volume_tags"); ok {
-			tags := tagsFromMap(v.(map[string]interface{}))
+			tags := TagsFromMap(v.(map[string]interface{}))
 
 			spec := &ec2.TagSpecification{
 				ResourceType: aws.String("volume"),
@@ -734,7 +734,7 @@ func resourceAwsInstanceRead(d *schema.ResourceData, meta interface{}) error {
 		d.Set("monitoring", monitoringState == "enabled" || monitoringState == "pending")
 	}
 
-	d.Set("tags", tagsToMap(instance.Tags))
+	d.Set("tags", TagsToMap(instance.Tags))
 
 	if err := readVolumeTags(conn, d); err != nil {
 		return err
@@ -807,7 +807,7 @@ func resourceAwsInstanceUpdate(d *schema.ResourceData, meta interface{}) error {
 
 	if d.HasChange("tags") {
 		if !d.IsNewResource() || restricted {
-			if err := setTags(conn, d); err != nil {
+			if err := SetTags(conn, d); err != nil {
 				return err
 			} else {
 				d.SetPartial("tags")
@@ -816,7 +816,7 @@ func resourceAwsInstanceUpdate(d *schema.ResourceData, meta interface{}) error {
 	}
 	if d.HasChange("volume_tags") {
 		if !d.IsNewResource() || !restricted {
-			if err := setVolumeTags(conn, d); err != nil {
+			if err := SetVolumeTags(conn, d); err != nil {
 				return err
 			} else {
 				d.SetPartial("volume_tags")
@@ -1516,7 +1516,7 @@ func readVolumeTags(conn *ec2.EC2, d *schema.ResourceData) error {
 		tags = append(tags, tag)
 	}
 
-	d.Set("volume_tags", tagsToMap(tags))
+	d.Set("volume_tags", TagsToMap(tags))
 
 	return nil
 }

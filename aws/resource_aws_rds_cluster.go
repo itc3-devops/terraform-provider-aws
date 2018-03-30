@@ -254,7 +254,7 @@ func resourceAwsRDSCluster() *schema.Resource {
 				ForceNew: true,
 			},
 
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
@@ -270,7 +270,7 @@ func resourceAwsRdsClusterImport(
 
 func resourceAwsRDSClusterCreate(d *schema.ResourceData, meta interface{}) error {
 	conn := meta.(*AWSClient).rdsconn
-	tags := tagsFromMapRDS(d.Get("tags").(map[string]interface{}))
+	tags := TagsFromMapRDS(d.Get("tags").(map[string]interface{}))
 
 	var identifier string
 	if v, ok := d.GetOk("cluster_identifier"); ok {
@@ -735,7 +735,7 @@ func resourceAwsRDSClusterUpdate(d *schema.ResourceData, meta interface{}) error
 	}
 
 	if arn, err := buildRDSClusterARN(d.Id(), meta.(*AWSClient).partition, meta.(*AWSClient).accountid, meta.(*AWSClient).region); err == nil {
-		if err := setTagsRDS(conn, d, arn); err != nil {
+		if err := SetTagsRDS(conn, d, arn); err != nil {
 			return err
 		} else {
 			d.SetPartial("tags")

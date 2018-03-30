@@ -50,9 +50,9 @@ func TestDiffRDSTags(t *testing.T) {
 	}
 
 	for i, tc := range cases {
-		c, r := diffTagsRDS(tagsFromMapRDS(tc.Old), tagsFromMapRDS(tc.New))
-		cm := tagsToMapRDS(c)
-		rm := tagsToMapRDS(r)
+		c, r := DiffTagsRDS(TagsFromMapRDS(tc.Old), TagsFromMapRDS(tc.New))
+		cm := TagsToMapRDS(c)
+		rm := TagsToMapRDS(r)
 		if !reflect.DeepEqual(cm, tc.Create) {
 			t.Fatalf("%d: bad create: %#v", i, cm)
 		}
@@ -73,7 +73,7 @@ func TestIgnoringTagsRDS(t *testing.T) {
 		Value: aws.String("baz"),
 	})
 	for _, tag := range ignoredTags {
-		if !tagIgnoredRDS(tag) {
+		if !TagIgnoredRDS(tag) {
 			t.Fatalf("Tag %v with value %v not ignored, but should be!", *tag.Key, *tag.Value)
 		}
 	}
@@ -83,7 +83,7 @@ func TestIgnoringTagsRDS(t *testing.T) {
 func testAccCheckRDSTags(
 	ts []*rds.Tag, key string, value string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		m := tagsToMapRDS(ts)
+		m := TagsToMapRDS(ts)
 		v, ok := m[key]
 		if value != "" && !ok {
 			return fmt.Errorf("Missing tag: %s", key)

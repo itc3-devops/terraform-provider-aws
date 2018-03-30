@@ -50,9 +50,9 @@ func TestDiffelasticacheTags(t *testing.T) {
 	}
 
 	for i, tc := range cases {
-		c, r := diffTagsEC(tagsFromMapEC(tc.Old), tagsFromMapEC(tc.New))
-		cm := tagsToMapEC(c)
-		rm := tagsToMapEC(r)
+		c, r := DiffTagsEC(TagsFromMapEC(tc.Old), TagsFromMapEC(tc.New))
+		cm := TagsToMapEC(c)
+		rm := TagsToMapEC(r)
 		if !reflect.DeepEqual(cm, tc.Create) {
 			t.Fatalf("%d: bad create: %#v", i, cm)
 		}
@@ -73,7 +73,7 @@ func TestIgnoringTagsEC(t *testing.T) {
 		Value: aws.String("baz"),
 	})
 	for _, tag := range ignoredTags {
-		if !tagIgnoredEC(tag) {
+		if !TagIgnoredEC(tag) {
 			t.Fatalf("Tag %v with value %v not ignored, but should be!", *tag.Key, *tag.Value)
 		}
 	}
@@ -83,7 +83,7 @@ func TestIgnoringTagsEC(t *testing.T) {
 func testAccCheckelasticacheTags(
 	ts []*elasticache.Tag, key string, value string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		m := tagsToMapEC(ts)
+		m := TagsToMapEC(ts)
 		v, ok := m[key]
 		if value != "" && !ok {
 			return fmt.Errorf("Missing tag: %s", key)

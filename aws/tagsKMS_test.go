@@ -51,9 +51,9 @@ func TestDiffKMSTags(t *testing.T) {
 	}
 
 	for i, tc := range cases {
-		c, r := diffTagsKMS(tagsFromMapKMS(tc.Old), tagsFromMapKMS(tc.New))
-		cm := tagsToMapKMS(c)
-		rm := tagsToMapKMS(r)
+		c, r := DiffTagsKMS(TagsFromMapKMS(tc.Old), TagsFromMapKMS(tc.New))
+		cm := TagsToMapKMS(c)
+		rm := TagsToMapKMS(r)
 		if !reflect.DeepEqual(cm, tc.Create) {
 			t.Fatalf("%d: bad create: %#v", i, cm)
 		}
@@ -75,7 +75,7 @@ func TestIgnoringTagsKMS(t *testing.T) {
 		TagValue: aws.String("baz"),
 	})
 	for _, tag := range ignoredTags {
-		if !tagIgnoredKMS(tag) {
+		if !TagIgnoredKMS(tag) {
 			t.Fatalf("Tag %v with value %v not ignored, but should be!", *tag.TagKey, *tag.TagValue)
 		}
 	}
@@ -85,7 +85,7 @@ func TestIgnoringTagsKMS(t *testing.T) {
 func testAccCheckKMSTags(
 	ts []*kms.Tag, key string, value string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		m := tagsToMapKMS(ts)
+		m := TagsToMapKMS(ts)
 		v, ok := m[key]
 		if value != "" && !ok {
 			return fmt.Errorf("Missing tag: %s", key)

@@ -33,7 +33,7 @@ func resourceAwsInspectorResourceGroupCreate(d *schema.ResourceData, meta interf
 	conn := meta.(*AWSClient).inspectorconn
 
 	resp, err := conn.CreateResourceGroup(&inspector.CreateResourceGroupInput{
-		ResourceGroupTags: tagsFromMapInspector(d.Get("tags").(map[string]interface{})),
+		ResourceGroupTags: TagsFromMapInspector(d.Get("tags").(map[string]interface{})),
 	})
 
 	if err != nil {

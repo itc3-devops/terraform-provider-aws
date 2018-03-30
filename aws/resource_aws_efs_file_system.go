@@ -73,7 +73,7 @@ func resourceAwsEfsFileSystem() *schema.Resource {
 				Computed: true,
 			},
 
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
@@ -161,7 +161,7 @@ func resourceAwsEfsFileSystemCreate(d *schema.ResourceData, meta interface{}) er
 
 func resourceAwsEfsFileSystemUpdate(d *schema.ResourceData, meta interface{}) error {
 	conn := meta.(*AWSClient).efsconn
-	err := setTagsEFS(conn, d)
+	err := SetTagsEFS(conn, d)
 	if err != nil {
 		return fmt.Errorf("Error setting EC2 tags for EFS file system (%q): %s",
 			d.Id(), err.Error())
@@ -216,7 +216,7 @@ func resourceAwsEfsFileSystemRead(d *schema.ResourceData, meta interface{}) erro
 		}
 	}
 
-	err = d.Set("tags", tagsToMapEFS(tags))
+	err = d.Set("tags", TagsToMapEFS(tags))
 	if err != nil {
 		return err
 	}

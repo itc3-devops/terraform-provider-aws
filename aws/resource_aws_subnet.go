@@ -68,7 +68,7 @@ func resourceAwsSubnet() *schema.Resource {
 				Computed: true,
 			},
 
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
@@ -154,7 +154,7 @@ func resourceAwsSubnetRead(d *schema.ResourceData, meta interface{}) error {
 			d.Set("ipv6_cidr_block", "")
 		}
 	}
-	d.Set("tags", tagsToMap(subnet.Tags))
+	d.Set("tags", TagsToMap(subnet.Tags))
 
 	return nil
 }
@@ -164,7 +164,7 @@ func resourceAwsSubnetUpdate(d *schema.ResourceData, meta interface{}) error {
 
 	d.Partial(true)
 
-	if err := setTags(conn, d); err != nil {
+	if err := SetTags(conn, d); err != nil {
 		return err
 	} else {
 		d.SetPartial("tags")

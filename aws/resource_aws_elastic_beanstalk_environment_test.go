@@ -696,7 +696,7 @@ func testAccCheckBeanstalkEnvTagsMatch(env *elasticbeanstalk.EnvironmentDescript
 			return err
 		}
 
-		foundTags := tagsToMapBeanstalk(tags.ResourceTags)
+		foundTags := TagsToMapBeanstalk(tags.ResourceTags)
 
 		if !reflect.DeepEqual(foundTags, expectedValue) {
 			return fmt.Errorf("Tag value: %s.  Expected %s", foundTags, expectedValue)

@@ -191,7 +191,7 @@ func resourceAwsLb() *schema.Resource {
 				Computed: true,
 			},
 
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
@@ -212,7 +212,7 @@ func resourceAwsLbCreate(d *schema.ResourceData, meta interface{}) error {
 	elbOpts := &elbv2.CreateLoadBalancerInput{
 		Name: aws.String(name),
 		Type: aws.String(d.Get("load_balancer_type").(string)),
-		Tags: tagsFromMapELBv2(d.Get("tags").(map[string]interface{})),
+		Tags: TagsFromMapELBv2(d.Get("tags").(map[string]interface{})),
 	}
 
 	if scheme, ok := d.GetOk("internal"); ok && scheme.(bool) {
@@ -324,7 +324,7 @@ func resourceAwsLbUpdate(d *schema.ResourceData, meta interface{}) error {
 	elbconn := meta.(*AWSClient).elbv2conn
 
 	if !d.IsNewResource() {
-		if err := setElbV2Tags(elbconn, d); err != nil {
+		if err := SetElbV2Tags(elbconn, d); err != nil {
 			return errwrap.Wrapf("Error Modifying Tags on ALB: {{err}}", err)
 		}
 	}
@@ -684,7 +684,7 @@ func flattenAwsLbResource(d *schema.ResourceData, meta interface{}, lb *elbv2.Lo
 		et = respTags.TagDescriptions[0].Tags
 	}
 
-	if err := d.Set("tags", tagsToMapELBv2(et)); err != nil {
+	if err := d.Set("tags", TagsToMapELBv2(et)); err != nil {
 		log.Printf("[WARN] Error setting tags for AWS LB (%s): %s", d.Id(), err)
 	}
 

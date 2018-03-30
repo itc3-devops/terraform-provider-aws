@@ -65,7 +65,7 @@ func resourceAwsSsmParameter() *schema.Resource {
 				Type:     schema.TypeString,
 				Optional: true,
 			},
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
@@ -141,7 +141,7 @@ func resourceAwsSsmParameterRead(d *schema.ResourceData, meta interface{}) error
 	}); err != nil {
 		return fmt.Errorf("Failed to get SSM parameter tags for %s: %s", d.Get("name"), err)
 	} else {
-		d.Set("tags", tagsToMapSSM(tagList.TagList))
+		d.Set("tags", TagsToMapSSM(tagList.TagList))
 	}
 
 	arn := arn.ARN{
@@ -200,7 +200,7 @@ func resourceAwsSsmParameterPut(d *schema.ResourceData, meta interface{}) error 
 		return fmt.Errorf("error creating SSM parameter: %s", err)
 	}
 
-	if err := setTagsSSM(ssmconn, d, d.Get("name").(string), "Parameter"); err != nil {
+	if err := SetTagsSSM(ssmconn, d, d.Get("name").(string), "Parameter"); err != nil {
 		return fmt.Errorf("error creating SSM parameter tags: %s", err)
 	}
 

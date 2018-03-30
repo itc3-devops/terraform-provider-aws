@@ -222,7 +222,7 @@ func resourceAwsS3Bucket() *schema.Resource {
 							Type:     schema.TypeString,
 							Optional: true,
 						},
-						"tags": tagsSchema(),
+						"tags": TagsSchema(),
 						"enabled": {
 							Type:     schema.TypeBool,
 							Required: true,
@@ -477,7 +477,7 @@ func resourceAwsS3Bucket() *schema.Resource {
 				},
 			},
 
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
@@ -553,7 +553,7 @@ func resourceAwsS3BucketCreate(d *schema.ResourceData, meta interface{}) error {
 
 func resourceAwsS3BucketUpdate(d *schema.ResourceData, meta interface{}) error {
 	s3conn := meta.(*AWSClient).s3conn
-	if err := setTagsS3(s3conn, d); err != nil {
+	if err := SetTagsS3(s3conn, d); err != nil {
 		return fmt.Errorf("%q: %s", d.Get("bucket").(string), err)
 	}
 
@@ -916,7 +916,7 @@ func resourceAwsS3BucketRead(d *schema.ResourceData, meta interface{}) error {
 					}
 					// Tag
 					if len(filter.And.Tags) > 0 {
-						rule["tags"] = tagsToMapS3(filter.And.Tags)
+						rule["tags"] = TagsToMapS3(filter.And.Tags)
 					}
 				} else {
 					// Prefix
@@ -1104,7 +1104,7 @@ func resourceAwsS3BucketRead(d *schema.ResourceData, meta interface{}) error {
 		return err
 	}
 
-	if err := d.Set("tags", tagsToMapS3(tagSet)); err != nil {
+	if err := d.Set("tags", TagsToMapS3(tagSet)); err != nil {
 		return err
 	}
 
@@ -1813,7 +1813,7 @@ func resourceAwsS3BucketLifecycleUpdate(s3conn *s3.S3, d *schema.ResourceData) e
 		if len(tags) > 0 {
 			lifecycleRuleAndOp := &s3.LifecycleRuleAndOperator{}
 			lifecycleRuleAndOp.SetPrefix(r["prefix"].(string))
-			lifecycleRuleAndOp.SetTags(tagsFromMapS3(tags))
+			lifecycleRuleAndOp.SetTags(TagsFromMapS3(tags))
 			filter.SetAnd(lifecycleRuleAndOp)
 		} else {
 			filter.SetPrefix(r["prefix"].(string))

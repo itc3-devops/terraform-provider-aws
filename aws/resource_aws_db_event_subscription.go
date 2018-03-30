@@ -59,7 +59,7 @@ func resourceAwsDbEventSubscription() *schema.Resource {
 				Type:     schema.TypeString,
 				Computed: true,
 			},
-			"tags": tagsSchema(),
+			"tags": TagsSchema(),
 		},
 	}
 }
@@ -67,7 +67,7 @@ func resourceAwsDbEventSubscription() *schema.Resource {
 func resourceAwsDbEventSubscriptionCreate(d *schema.ResourceData, meta interface{}) error {
 	rdsconn := meta.(*AWSClient).rdsconn
 	name := d.Get("name").(string)
-	tags := tagsFromMapRDS(d.Get("tags").(map[string]interface{}))
+	tags := TagsFromMapRDS(d.Get("tags").(map[string]interface{}))
 
 	sourceIdsSet := d.Get("source_ids").(*schema.Set)
 	sourceIds := make([]*string, sourceIdsSet.Len())
@@ -170,7 +170,7 @@ func resourceAwsDbEventSubscriptionRead(d *schema.ResourceData, meta interface{}
 		if len(resp.TagList) > 0 {
 			dt = resp.TagList
 		}
-		d.Set("tags", tagsToMapRDS(dt))
+		d.Set("tags", TagsToMapRDS(dt))
 	}
 
 	return nil
@@ -266,7 +266,7 @@ func resourceAwsDbEventSubscriptionUpdate(d *schema.ResourceData, meta interface
 	}
 
 	if arn, err := buildRDSEventSubscriptionARN(d.Get("customer_aws_id").(string), d.Id(), meta.(*AWSClient).partition, meta.(*AWSClient).region); err == nil {
-		if err := setTagsRDS(rdsconn, d, arn); err != nil {
+		if err := SetTagsRDS(rdsconn, d, arn); err != nil {
 			return err
 		} else {
 			d.SetPartial("tags")
